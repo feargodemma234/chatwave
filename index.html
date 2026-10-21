@@ -3,636 +3,359 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatWave UI</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
+    <title>NEXORA STUDIOS | Digital Store</title>
+    <!-- Premium Tech Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
-        /* --- CSS Reset & Variables --- */
         :root {
-            --primary-blue: #0b5cff;
-            --primary-blue-light: #e6efff;
-            --bg-gray: #f7f8fa;
-            --bg-white: #ffffff;
-            --text-dark: #1f2937;
-            --text-gray: #6b7280;
-            --text-light: #9ca3af;
-            --border-color: #e5e7eb;
-            --online-green: #10b981;
+            --bg-base: #050505;
+            --nexora-blue: #0088ff;
+            --nexora-cyan: #00f0ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            background-color: #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-base); 
+            color: var(--text-main);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* --- Main Layout Container --- */
-        .app-container {
+        /* --- Animated Background Orbs --- */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--nexora-blue); top: -100px; left: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: 10%; right: -50px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* --- Sticky Glass Header --- */
+        .navbar {
+            position: sticky;
+            top: 0;
             width: 100%;
-            max-width: 1200px;
-            height: 85vh;
-            background-color: var(--bg-white);
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* --- Top Navigation Bar --- */
-        .top-navbar {
+            padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 24px;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--bg-white);
-            z-index: 10;
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
         }
 
-        .logo {
+        .logo h1 { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+        }
+        .logo span { color: var(--nexora-blue); text-shadow: 0 0 15px var(--nexora-blue); }
+        
+        .header-contact {
+            font-size: 0.9rem;
+            color: var(--text-muted);
             display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 24px;
+            gap: 20px;
+        }
+        .header-contact a { color: var(--text-main); text-decoration: none; transition: color 0.3s; }
+        .header-contact a:hover { color: var(--nexora-cyan); }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h2 { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem; 
             font-weight: 700;
-            color: var(--text-dark);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+            letter-spacing: 1px;
         }
 
-        .logo i {
-            color: var(--primary-blue);
-            background-color: var(--primary-blue-light);
-            padding: 8px;
-            border-radius: 50%;
-            font-size: 20px;
+        /* --- Product Grid --- */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            padding: 0 20px;
         }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            color: var(--text-dark);
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .notification {
+        
+        /* --- Glassmorphism Cards --- */
+        .card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.6s forwards;
         }
 
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 5px;
-            border-radius: 10px;
-            border: 2px solid var(--bg-white);
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .user-profile {
+        .card:hover { 
+            transform: translateY(-10px) scale(1.02); 
+            border-color: rgba(0, 136, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 136, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .card-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .card h3 { 
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0 0 15px 0; 
+            font-size: 1.4rem; 
+            color: var(--text-main); 
+            text-transform: capitalize; 
+        }
+        
+        .description { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            margin-bottom: 25px; 
+            flex-grow: 1; 
+        }
+        
+        .price-container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .price { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; 
+            color: var(--nexora-cyan); 
+            font-size: 1.8rem; 
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        
+        /* Interactive Button */
+        .buy-btn { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             gap: 10px;
-            font-weight: 500;
-            font-size: 15px;
+            background: linear-gradient(135deg, var(--nexora-blue), #0055cc);
+            color: white; 
+            padding: 16px; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; 
+            font-size: 1rem; 
+            letter-spacing: 1px;
+            transition: all 0.3s ease; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .buy-btn i { transition: transform 0.3s ease; }
+        
+        .buy-btn:hover { 
+            background: linear-gradient(135deg, #0099ff, #0066ee);
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
         }
 
-        .avatar-sm {
-            width: 32px;
-            height: 32px;
-            background-color: var(--primary-blue);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
+        .buy-btn:hover i {
+            transform: translateX(5px);
         }
 
-        /* --- Main Content Area --- */
-        .main-content {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        /* --- Sidebar (Left Column) --- */
-        .sidebar {
-            width: 350px;
-            background-color: var(--bg-gray);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sidebar-header h2 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .sidebar-header i {
-            font-size: 20px;
-            color: var(--text-gray);
-            cursor: pointer;
-        }
-
-        .search-bar {
-            margin: 0 20px 15px 20px;
-            position: relative;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
+        /* --- Loading Skeletons --- */
+        .skeleton-card {
+            height: 300px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
             border-radius: 20px;
-            border: 1px solid var(--border-color);
-            background-color: #ffffff;
-            font-size: 14px;
-            outline: none;
-            color: var(--text-dark);
+            border: 1px solid var(--glass-border);
         }
 
-        .search-bar i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-            font-size: 14px;
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 10px;
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
         }
-
-        .chat-item {
-            display: flex;
+        .footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; }
+        .footer a {
+            display: inline-flex;
             align-items: center;
-            padding: 12px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 5px;
-            transition: background 0.2s;
-        }
-
-        .chat-item:hover {
-            background-color: #e5e7eb;
-        }
-
-        .chat-item.active {
-            background-color: #b8cfff; /* Matching the image active state */
-        }
-
-        .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            gap: 8px;
+            color: var(--text-main);
+            text-decoration: none;
             font-weight: 600;
-            font-size: 16px;
-            margin-right: 15px;
-            flex-shrink: 0;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s;
         }
-
-        /* Avatar Colors */
-        .bg-purple { background-color: #8b5cf6; }
-        .bg-gray { background-color: #9ca3af; }
-        .bg-green { background-color: #10b981; }
-        .bg-orange { background-color: #f59e0b; }
-        .bg-pink { background-color: #ec4899; }
-
-        .chat-info {
-            flex: 1;
-            overflow: hidden;
+        .footer a:hover {
+            background: var(--nexora-blue);
+            border-color: var(--nexora-blue);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.4);
         }
-
-        .chat-info-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4px;
-        }
-
-        .chat-name {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--text-dark);
-        }
-
-        .chat-time {
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        .chat-preview {
-            font-size: 13px;
-            color: var(--text-gray);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .unread-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--primary-blue);
-            border-radius: 50%;
-            margin-left: 10px;
-        }
-
-        /* --- Chat Area (Right Column) --- */
-        .chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-white);
-        }
-
-        .chat-header {
-            padding: 15px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .chat-header-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .chat-header-details {
-            margin-left: 15px;
-        }
-
-        .chat-header-details h3 {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .chat-status {
-            font-size: 13px;
-            color: var(--online-green);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-top: 2px;
-        }
-
-        .chat-status::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background-color: var(--online-green);
-            border-radius: 50%;
-        }
-
-        .chat-header-actions {
-            display: flex;
-            gap: 20px;
-            color: var(--text-dark);
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .message-history {
-            flex: 1;
-            padding: 24px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background-color: #fafbfc;
-        }
-
-        .message {
-            display: flex;
-            max-width: 70%;
-        }
-
-        .message.received {
-            align-self: flex-start;
-        }
-
-        .message.sent {
-            align-self: flex-end;
-        }
-
-        .message-bubble {
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.5;
-            position: relative;
-        }
-
-        .message.received .message-bubble {
-            background-color: #f1f3f5;
-            color: var(--text-dark);
-            border-bottom-left-radius: 4px;
-        }
-
-        .message.sent .message-bubble {
-            background-color: var(--primary-blue);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message-time {
-            font-size: 11px;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .message.received .message-time {
-            color: var(--text-gray);
-        }
-
-        .message.sent .message-time {
-            color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Input Area */
-        .message-input-area {
-            padding: 15px 24px;
-            background-color: var(--bg-white);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .input-actions-left {
-            display: flex;
-            gap: 15px;
-            color: var(--text-dark);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .message-input-area input {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            background-color: #f9fafb;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .message-input-area input:focus {
-            border-color: var(--primary-blue);
-            background-color: white;
-        }
-
-        .send-btn {
-            background-color: var(--primary-blue);
-            color: white;
-            border: none;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background 0.2s;
-        }
-
-        .send-btn:hover {
-            background-color: #0049d6;
-        }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
-        }
+        .footer a i { color: #25D366; } /* WhatsApp Green */
+        .footer a:hover i { color: white; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        
-        <!-- Top Navigation -->
-        <header class="top-navbar">
-            <div class="logo">
-                <i class="fa-solid fa-comment-dots"></i>
-                ChatWave
-            </div>
-            <div class="nav-actions">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <div class="notification">
-                    <i class="fa-regular fa-bell"></i>
-                    <span class="notification-badge">2</span>
-                </div>
-                <div class="user-profile">
-                    <div class="avatar-sm">JD</div>
-                    You <i class="fa-solid fa-chevron-down" style="font-size: 12px; margin-left: 4px;"></i>
-                </div>
-            </div>
-        </header>
+    <!-- Background Effects -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
 
-        <div class="main-content">
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h2>Messages</h2>
-                    <i class="fa-solid fa-plus"></i>
-                </div>
-                
-                <div class="search-bar">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search conversations...">
-                </div>
-
-                <div class="chat-list">
-                    <!-- Active Chat -->
-                    <div class="chat-item active">
-                        <div class="avatar bg-purple">AR</div>
-                        <div class="chat-info">
-                            <div class="chat-info-top">
-                                <span class="chat-name">Alex Rivera</span>
-                                <span class="chat-time">10:32 AM</span>
-                            </div>
-                            <div class="chat-preview">
-                                <span>Sounds good! I'll send over the design files today 👍</span>
-                                <div class="unread-dot"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Other Chats -->
-                    <div class="chat-item">
-                        <div class="avatar bg-gray"><i class="fa-solid fa-users"></i></div>
-                        <div class="chat-info">
-                            <div class="chat-info-top">
-                                <span class="chat-name">Product Team</span>
-                                <span class="chat-time">09:45 AM</span>
-                            </div>
-                            <div class="chat-preview">
-                                Maya: The latest mockup is uploaded to Figma
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="chat-item">
-                        <div class="avatar bg-green">JL</div>
-                        <div class="chat-info">
-                            <div class="chat-info-top">
-                                <span class="chat-name">Jordan Lee</span>
-                                <span class="chat-time">Yesterday</span>
-                            </div>
-                            <div class="chat-preview">
-                                Thanks! Looking forward to the meeting
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="chat-item">
-                        <div class="avatar bg-orange"><i class="fa-solid fa-paintbrush"></i></div>
-                        <div class="chat-info">
-                            <div class="chat-info-top">
-                                <span class="chat-name">Design Studio</span>
-                                <span class="chat-time">Yesterday</span>
-                            </div>
-                            <div class="chat-preview">
-                                You: Agreed, the color palette works well
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="chat-item">
-                        <div class="avatar bg-pink">SK</div>
-                        <div class="chat-info">
-                            <div class="chat-info-top">
-                                <span class="chat-name">Sarah Kim</span>
-                                <span class="chat-time">Mon</span>
-                            </div>
-                            <div class="chat-preview">
-                                Can we reschedule for Thursday?
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Chat Area -->
-            <main class="chat-area">
-                <!-- Chat Header -->
-                <header class="chat-header">
-                    <div class="chat-header-info">
-                        <div class="avatar bg-purple">AR</div>
-                        <div class="chat-header-details">
-                            <h3>Alex Rivera</h3>
-                            <div class="chat-status">Online • Active now</div>
-                        </div>
-                    </div>
-                    <div class="chat-header-actions">
-                        <i class="fa-solid fa-phone"></i>
-                        <i class="fa-solid fa-video"></i>
-                        <i class="fa-solid fa-ellipsis"></i>
-                    </div>
-                </header>
-
-                <!-- Messages -->
-                <div class="message-history">
-                    
-                    <div class="message received">
-                        <div class="message-bubble">
-                            Hey! Just wanted to check in on the project timeline. Are we still on track for the Friday deadline?
-                            <div class="message-time">10:30 AM</div>
-                        </div>
-                    </div>
-
-                    <div class="message sent">
-                        <div class="message-bubble">
-                            Hi Alex! Yes, we're right on schedule. The UI components are finalized and I'm just doing the final QC now.
-                            <div class="message-time">10:31 AM <i class="fa-solid fa-check"></i></div>
-                        </div>
-                    </div>
-
-                    <div class="message received">
-                        <div class="message-bubble">
-                            Perfect, that's great to hear. Do you need anything from the design team before we finalize?
-                            <div class="message-time">10:31 AM</div>
-                        </div>
-                    </div>
-
-                    <div class="message sent">
-                        <div class="message-bubble">
-                            Sounds good! I'll send over the design files today 👍
-                            <div class="message-time">10:32 AM <i class="fa-solid fa-check"></i></div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Message Input -->
-                <div class="message-input-area">
-                    <div class="input-actions-left">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <i class="fa-regular fa-face-smile"></i>
-                        <i class="fa-regular fa-image"></i>
-                    </div>
-                    <input type="text" placeholder="Write a message...">
-                    <button class="send-btn">
-                        <i class="fa-solid fa-paper-plane"></i>
-                    </button>
-                </div>
-            </main>
-
+    <!-- Sticky Glass Header -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>NEX<span>O</span>RA</h1>
         </div>
+        <div class="header-contact">
+            <a href="mailto:nexorastudio5656@gmail.com"><i class="fa-solid fa-envelope"></i> Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Ideas. Designed Digitally.</h2>
+        <p>Premium digital assets and tools curated for creators.</p>
+    </section>
+
+    <!-- Product Grid -->
+    <div class="grid" id="product-grid">
+        <!-- Loading Skeletons -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
     </div>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 NEXORA STUDIOS. All rights reserved.</p>
+        <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
+        </a>
+    </footer>
+
+    <script>
+        // YOUR GOOGLE SHEET ID
+        const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM';
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+        async function loadProducts() {
+            const grid = document.getElementById('product-grid');
+            
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: true, 
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        grid.innerHTML = ''; // Clear skeletons
+
+                        if (results.data.length === 0) {
+                            grid.innerHTML = '<p style="color:white; grid-column: 1/-1; text-align:center;">No products found.</p>';
+                            return;
+                        }
+
+                        results.data.forEach((product, index) => {
+                            let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
+                            
+                            // Append add_to_cart=1 for direct checkout
+                            const checkoutLink = selarLink.includes('?') 
+                                ? selarLink + '&add_to_cart=1' 
+                                : selarLink + '?add_to_cart=1';
+
+                            // Format price
+                            const formattedPrice = product['price USD'] ? `$${product['price USD']}` : 'Free';
+
+                            const card = document.createElement('div');
+                            card.className = 'card';
+                            // Staggered animation delay
+                            card.style.animationDelay = `${index * 0.1}s`; 
+                            
+                            card.innerHTML = `
+                                <div class="card-content">
+                                    <h3>${product.name || 'Untitled Product'}</h3>
+                                    <p class="description">${product.description || 'No description available for this product.'}</p>
+                                    
+                                    <div class="price-container">
+                                        <div class="price">${formattedPrice}</div>
+                                    </div>
+                                    
+                                    <a href="${checkoutLink}" target="_blank" class="buy-btn">
+                                        Buy Now <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        });
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                grid.innerHTML = '<p style="color:red; grid-column: 1/-1; text-align:center;">Error loading store. Check Google Sheet permissions.</p>';
+            }
+        }
+
+        loadProducts();
+    </script>
 </body>
 </html>
