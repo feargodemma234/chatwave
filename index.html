@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXORA STUDIOS | Digital Store</title>
+    
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-dark: #09090b;
+            --card-bg: #121215;
+            --accent-blue: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border-color: #27272a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- Ambient Background Glow --- */
+        .ambient-glow {
+            position: fixed;
+            top: -20vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100vw;
+            height: 50vh;
+            background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navigation --- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            gap: 20px;
+        }
+
+        .logo {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.4rem; 
+            font-weight: 800; 
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        .logo span { color: var(--accent-blue); }
+        
+        /* --- Working Search Bar --- */
+        .search-container {
+            flex-grow: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        .search-container i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 50px;
+            background: #18181b;
+            border: 1px solid var(--border-color);
+            color: white;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .search-container input:focus {
+            border-color: var(--accent-blue);
+            background: #1f1f23;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+
+        .contact-btn {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: color 0.3s;
+        }
+        .contact-btn:hover { color: white; }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 50px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .hero h2 { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem); 
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .hero h2 span {
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* --- Product Grid --- */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 25px; 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            padding: 0 20px;
+            width: 100%;
+            flex-grow: 1;
+        }
+        
+        /* --- Modern Cards --- */
+        .card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color);
+            border-radius: 20px; 
+            overflow: hidden;
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover { 
+            transform: translateY(-8px); 
+            border-color: #3f3f46;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Image Zoom Effect */
+        .image-wrapper {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .card:hover .card-image {
+            transform: scale(1.05);
+        }
+        
+        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .card h3 { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0 0 10px 0; 
+            font-size: 1.3rem; 
+            font-weight: 700;
+        }
+        
+        .description { 
+            color: var(--text-muted); 
+            font-size: 0.9rem; 
+            line-height: 1.6; 
+            margin-bottom: 20px; 
+            flex-grow: 1; 
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .price { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800; 
+            color: white; 
+            font-size: 1.6rem; 
+        }
+        
+        /* Pill Shaped Button */
+        .buy-btn { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--accent-blue);
+            color: white; 
+            padding: 14px 24px; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700; 
+            font-size: 0.95rem; 
+            transition: all 0.3s ease; 
+        }
+        
+        .buy-btn:hover { 
+            background: #2563eb;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--border-color);
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--border-color);
+            background: #09090b;
+        }
+        .footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; }
+        .footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background: #18181b;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        .footer a:hover {
+            background: #27272a;
+            border-color: #3f3f46;
+        }
+        .footer a i { color: #25D366; font-size: 1.2rem; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .navbar { flex-wrap: wrap; padding: 15px 20px; }
+            .search-container { order: 3; max-width: 100%; margin-top: 10px; }
+            .hero { padding: 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">NEX<span>O</span>RA</div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" placeholder="Search digital products...">
+        </div>
+
+        <a href="mailto:nexorastudio5656@gmail.com" class="contact-btn">
+            <i class="fa-regular fa-envelope"></i> Contact
+        </a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="badge">Nexora Studios</div>
+        <h2>Ideas. Designed <span>Digitally.</span></h2>
+        <p>Premium digital assets and tools curated for creators, students, and professionals.</p>
+    </section>
+
+    <!-- Product Grid -->
+    <div class="grid" id="product-grid">
+        <!-- Skeletons -->
+        <div class="skeleton-card" style="height:400px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite;"></div>
+        <div class="skeleton-card" style="height:400px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite; animation-delay: 0.2s;"></div>
+        <div class="skeleton-card" style="height:400px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite; animation-delay: 0.4s;"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
+        <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
+        </a>
+    </footer>
+
+    <script>
+        // Auto Year
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        // Store products globally for search
+        let allProducts = [];
+        const grid = document.getElementById('product-grid');
+        const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM';
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+        // Fetch Data
+        async function loadProducts() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: true, 
+                    skipEmptyLines: true,
+                    transformHeader: function(header) {
+                        return header.trim().toLowerCase();
+                    },
+                    complete: function(results) {
+                        allProducts = results.data;
+                        renderProducts(allProducts);
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                grid.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Error loading store.</p>';
+            }
+        }
+
+        // Render Function (Used for initial load AND search)
+        function renderProducts(products) {
+            grid.innerHTML = '';
+
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-box-open"></i>
+                        <h3>No products found</h3>
+                        <p>Try searching for something else.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            products.forEach((product, index) => {
+                let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
+                const checkoutLink = selarLink.includes('?') 
+                    ? selarLink + '&add_to_cart=1' 
+                    : selarLink + '?add_to_cart=1';
+
+                const rawPrice = product['price usd'];
+                const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+
+                let imgUrl = product.image ? product.image.trim() : '';
+                if (imgUrl.includes('drive.google.com')) {
+                    const fileId = imgUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                    if (fileId && fileId[1]) {
+                        imgUrl = `https://drive.google.com/uc?export=view&id=${fileId[1]}`;
+                    }
+                }
+                const fallbackImage = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
+                if (!imgUrl) imgUrl = fallbackImage;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.animationDelay = `${index * 0.05}s`; 
+                
+                card.innerHTML = `
+                    <div class="image-wrapper">
+                        <img src="${imgUrl}" alt="${product.name}" class="card-image" onerror="this.src='${fallbackImage}'">
+                    </div>
+                    <div class="card-content">
+                        <h3>${product.name || 'Untitled Product'}</h3>
+                        <p class="description">${product.description || 'No description available.'}</p>
+                        <div class="price-row">
+                            <div class="price">${formattedPrice}</div>
+                        </div>
+                        <a href="${checkoutLink}" target="_blank" class="buy-btn">
+                            Buy Now
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            const filteredProducts = allProducts.filter(product => {
+                const name = (product.name || '').toLowerCase();
+                const desc = (product.description || '').toLowerCase();
+                return name.includes(searchTerm) || desc.includes(searchTerm);
+            });
+            
+            renderProducts(filteredProducts);
+        });
+
+        // Initialize
+        loadProducts();
+    </script>
+</body>
+</html>
