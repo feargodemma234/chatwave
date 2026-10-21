@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXORA STUDIOS | Digital Store</title>
+    <!-- Premium Tech Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PapaParse to read the Google Sheet CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-base: #050505;
+            --nexora-blue: #0088ff;
+            --nexora-cyan: #00f0ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-base); 
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Animated Background Orbs --- */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; background: var(--nexora-blue); top: -100px; left: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #8b5cf6; bottom: 10%; right: -50px; animation-delay: -5s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* --- Sticky Glass Header --- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 100;
+        }
+
+        .logo h1 { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+        }
+        .logo span { color: var(--nexora-blue); text-shadow: 0 0 15px var(--nexora-blue); }
+        
+        .header-contact {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 20px;
+        }
+        .header-contact a { color: var(--text-main); text-decoration: none; transition: color 0.3s; }
+        .header-contact a:hover { color: var(--nexora-cyan); }
+
+        /* --- Hero Section --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero h2 { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem; 
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p { 
+            color: var(--text-muted); 
+            font-size: 1.1rem; 
+            letter-spacing: 1px;
+        }
+
+        /* --- Product Grid --- */
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 0 auto 80px; 
+            padding: 0 20px;
+            width: 100%;
+            flex-grow: 1;
+        }
+        
+        /* --- Glassmorphism Cards --- */
+        .card { 
+            background: var(--glass-bg); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.6s forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover { 
+            transform: translateY(-10px) scale(1.02); 
+            border-color: rgba(0, 136, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 136, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .card-content { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .card h3 { 
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0 0 15px 0; 
+            font-size: 1.4rem; 
+            color: var(--text-main); 
+            text-transform: capitalize; 
+        }
+        
+        .description { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            margin-bottom: 25px; 
+            flex-grow: 1; 
+        }
+        
+        .price-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .price { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; 
+            color: var(--nexora-cyan); 
+            font-size: 1.8rem; 
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        
+        /* Interactive Button */
+        .buy-btn { 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--nexora-blue), #0055cc);
+            color: white; 
+            padding: 16px; 
+            text-decoration: none; 
+            border-radius: 12px; 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700; 
+            font-size: 1rem; 
+            letter-spacing: 1px;
+            transition: all 0.3s ease; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .buy-btn i { transition: transform 0.3s ease; }
+        
+        .buy-btn:hover { 
+            background: linear-gradient(135deg, #0099ff, #0066ee);
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.4);
+        }
+
+        .buy-btn:hover i {
+            transform: translateX(5px);
+        }
+
+        /* --- Loading Skeletons --- */
+        .skeleton-card {
+            height: 300px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px; }
+        .footer a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s;
+        }
+        .footer a:hover {
+            background: var(--nexora-blue);
+            border-color: var(--nexora-blue);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.4);
+        }
+        .footer a i { color: #25D366; } /* WhatsApp Green */
+        .footer a:hover i { color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Background Effects -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <!-- Sticky Glass Header -->
+    <nav class="navbar">
+        <div class="logo">
+            <h1>NEX<span>O</span>RA</h1>
+        </div>
+        <div class="header-contact">
+            <a href="mailto:nexorastudio5656@gmail.com"><i class="fa-solid fa-envelope"></i> Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Ideas. Designed Digitally.</h2>
+        <p>Premium digital assets and tools curated for creators.</p>
+    </section>
+
+    <!-- Product Grid -->
+    <div class="grid" id="product-grid">
+        <!-- Loading Skeletons -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 NEXORA STUDIOS. All rights reserved.</p>
+        <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank">
+            <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
+        </a>
+    </footer>
+
+    <script>
+        // YOUR GOOGLE SHEET ID
+        const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM';
+        
+        // Using the direct export URL (more reliable than gviz for this)
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+        async function loadProducts() {
+            const grid = document.getElementById('product-grid');
+            
+            try {
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: true, 
+                    skipEmptyLines: true,
+                    // This removes invisible spaces from your Google Sheet column headers
+                    transformHeader: function(header) {
+                        return header.trim();
+                    },
+                    complete: function(results) {
+                        grid.innerHTML = ''; // Clear skeletons
+
+                        if (results.data.length === 0) {
+                            grid.innerHTML = '<p style="color:white; grid-column: 1/-1; text-align:center;">No products found.</p>';
+                            return;
+                        }
+
+                        results.data.forEach((product, index) => {
+                            // Grab data from your exact column names
+                            let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
+                            
+                            // Append add_to_cart=1 for direct checkout
+                            const checkoutLink = selarLink.includes('?') 
+                                ? selarLink + '&add_to_cart=1' 
+                                : selarLink + '?add_to_cart=1';
+
+                            // Format price (handles empty cells gracefully)
+                            const rawPrice = product['price USD'];
+                            const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+
+                            const card = document.createElement('div');
+                            card.className = 'card';
+                            // Staggered animation delay
+                            card.style.animationDelay = `${index * 0.1}s`; 
+                            
+                            card.innerHTML = `
+                                <div class="card-content">
+                                    <h3>${product.name || 'Untitled Product'}</h3>
+                                    <p class="description">${product.description || 'No description available for this product.'}</p>
+                                    
+                                    <div class="price-container">
+                                        <div class="price">${formattedPrice}</div>
+                                    </div>
+                                    
+                                    <a href="${checkoutLink}" target="_blank" class="buy-btn">
+                                        Buy Now <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            `;
+                            grid.appendChild(card);
+                        });
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                grid.innerHTML = '<p style="color:red; grid-column: 1/-1; text-align:center;">Error loading store. Please check Google Sheet permissions.</p>';
+            }
+        }
+
+        loadProducts();
+    </script>
+</body>
+</html>
