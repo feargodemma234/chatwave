@@ -164,14 +164,16 @@
         .footer a.wa-link:hover { background: rgba(37, 211, 102, 0.2); }
         .footer a.wa-link i { color: #25D366; font-size: 1.2rem; }
 
-        /* --- Floating Contact Button --- */
+        /* --- UPDATED: Floating WhatsApp Button --- */
         .floating-contact {
-            position: fixed; bottom: 20px; right: 20px; background: var(--accent-blue); color: white;
+            position: fixed; bottom: 20px; right: 20px; 
+            background: #25D366; /* WhatsApp Green */
+            color: white;
             width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); z-index: 1000;
+            font-size: 1.8rem; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4); z-index: 1000;
             transition: transform 0.3s, background 0.3s; text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
         }
-        .floating-contact:hover { transform: scale(1.1); background: #2563eb; }
+        .floating-contact:hover { transform: scale(1.1); background: #1ebe5d; }
 
         /* --- Desktop Enhancements --- */
         @media (min-width: 768px) {
@@ -216,18 +218,18 @@
         <div class="skeleton-card" style="height:380px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite; animation-delay: 0.2s;"></div>
     </div>
 
-    <!-- UPDATED FOOTER: Removed email and phone number -->
     <footer class="footer">
         <p>© <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
         
+        <!-- WhatsApp Channel Link -->
         <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank" class="wa-link">
             <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
         </a>
     </footer>
 
-    <!-- Floating Contact Button (Kept this so they can still call you easily) -->
-    <a href="tel:+2349022077839" class="floating-contact">
-        <i class="fa-solid fa-phone"></i>
+    <!-- UPDATED: Floating WhatsApp Button (Links to your number) -->
+    <a href="https://wa.me/2349022077839" target="_blank" class="floating-contact" title="Chat with us on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
     </a>
 
     <script src="script.js"></script>
