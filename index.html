@@ -154,16 +154,7 @@
 
         /* --- Footer --- */
         .footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); background: #09090b; }
-        .footer p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; }
-        
-        .footer-contacts { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .footer-contacts a {
-            color: var(--text-main); text-decoration: none; font-size: 0.9rem; font-weight: 500;
-            display: flex; align-items: center; gap: 8px; transition: color 0.2s;
-            background: rgba(255,255,255,0.03); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-color);
-        }
-        .footer-contacts a:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
-        .footer-contacts i { color: var(--accent-blue); font-size: 1.1rem; }
+        .footer p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
         
         .footer a.wa-link {
             display: inline-flex; align-items: center; gap: 10px; color: white; text-decoration: none; font-weight: 600;
@@ -187,7 +178,6 @@
             .navbar { padding: 20px 5%; }
             .grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
             .card-image { height: 220px; }
-            .footer-contacts { flex-direction: row; justify-content: center; }
             
             .card:hover { transform: translateY(-8px); border-color: #3f3f46; box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.1); }
             .card:hover .card-image { transform: scale(1.05); }
@@ -226,23 +216,16 @@
         <div class="skeleton-card" style="height:380px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite; animation-delay: 0.2s;"></div>
     </div>
 
+    <!-- UPDATED FOOTER: Removed email and phone number -->
     <footer class="footer">
         <p>© <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
         
-        <div class="footer-contacts">
-            <a href="mailto:nexorastudio5656@gmail.com">
-                <i class="fa-solid fa-envelope"></i> nexorastudio5656@gmail.com
-            </a>
-            <a href="tel:+2349022077839">
-                <i class="fa-solid fa-phone"></i> +234 902 207 7839
-            </a>
-        </div>
-
         <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank" class="wa-link">
             <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
         </a>
     </footer>
 
+    <!-- Floating Contact Button (Kept this so they can still call you easily) -->
     <a href="tel:+2349022077839" class="floating-contact">
         <i class="fa-solid fa-phone"></i>
     </a>
