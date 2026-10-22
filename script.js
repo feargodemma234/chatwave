@@ -91,7 +91,7 @@ function renderProducts(products) {
     }
 
     products.forEach((product, index) => {
-        // Selar Link Logic (Keeps the add_to_cart=1 from your original code)
+        // Selar Link Logic
         let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
         const checkoutLink = selarLink.includes('?') 
             ? selarLink + '&add_to_cart=1' 
@@ -112,8 +112,8 @@ function renderProducts(products) {
         const card = document.createElement('div');
         card.className = 'card';
         
-        // Apply Staggered Animation (Assembly effect)
-        card.style.animationDelay = `${index * 0.1}s`;
+        // Apply Staggered Fade Up Animation
+        card.style.animationDelay = `${index * 0.05}s`;
 
         card.innerHTML = `
             <div class="image-wrapper">
