@@ -1,161 +1,185 @@
-// 🚨 YOUR GOOGLE SHEET ID
+// --- GOOGLE SHEETS CONFIG ---
 const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
-const grid = document.getElementById('product-grid');
-const searchInput = document.getElementById('searchInput');
-const productCounter = document.getElementById('product-counter');
+// --- DOM ELEMENTS ---
+const navbar = document.getElementById('navbar');
+const menuBtn = document.getElementById('menuBtn');
+const closeMenu = document.getElementById('closeMenu');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileLinks = document.querySelectorAll('.mobile-link');
+const productGrid = document.getElementById('product-grid');
+const projectForm = document.getElementById('projectForm');
+const heroVisual = document.getElementById('heroVisual');
 
-let allProducts = [];
-
-// Auto Year
+// --- AUTO UPDATE YEAR ---
 document.getElementById('year').textContent = new Date().getFullYear();
 
-// Helper: Convert product name to URL-friendly slug
-function slugify(text) {
-    return (text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+// --- NAVBAR SCROLL EFFECT ---
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// --- MOBILE MENU (WITH SCROLL LOCK) ---
+function toggleMenu(open) {
+    if (open) {
+        mobileMenu.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Lock background scroll
+    } else {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = ''; // Unlock background scroll
+    }
 }
 
-// Helper: Convert Google Drive link to direct image
+menuBtn.addEventListener('click', () => toggleMenu(true));
+closeMenu.addEventListener('click', () => toggleMenu(false));
+mobileLinks.forEach(link => {
+    link.addEventListener('click', () => toggleMenu(false));
+});
+
+// --- SCROLL REVEAL ANIMATIONS ---
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target); 
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// --- 3D PARALLAX EFFECT FOR HERO VISUAL (DESKTOP ONLY) ---
+if (window.matchMedia("(min-width: 768px)").matches) {
+    document.addEventListener('mousemove', (e) => {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+        
+        const mainCard = document.querySelector('.vc-main');
+        const subCard = document.querySelector('.vc-sub');
+        
+        if(mainCard && subCard) {
+            mainCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            subCard.style.transform = `rotateY(${xAxis * 1.5}deg) rotateX(${yAxis * 1.5}deg) translateZ(-50px)`;
+        }
+    });
+}
+
+// --- HELPER: GOOGLE DRIVE IMAGE LINK CONVERTER ---
 function getDriveDirectLink(url) {
     if (!url || !url.includes('drive.google.com')) return url;
     const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]+)/);
     return match && match[1] ? `https://drive.google.com/uc?export=view&id=${match[1]}` : url;
 }
 
-const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
+const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- MAIN LOGIC ---
+// --- FETCH & RENDER PRODUCTS ---
 async function loadProducts() {
     try {
-        const response = await fetch(CSV_URL);
-        const csvText = await response.text();
-
-        Papa.parse(csvText, {
-            header: true, 
+        Papa.parse(CSV_URL, {
+            download: true,
+            header: true,
             skipEmptyLines: true,
-            transformHeader: function(header) { return header.trim().toLowerCase(); },
+            transformHeader: header => header.trim().toLowerCase(),
             complete: function(results) {
-                
-                // 1. EXPIRY FILTER
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
-                allProducts = results.data.filter(product => {
+                // 1. Filter Expired Products
+                const activeProducts = results.data.filter(product => {
                     if (!product.expiry || product.expiry.trim() === '') return true;
                     const expiryDate = new Date(product.expiry);
-                    if (isNaN(expiryDate.getTime())) return true; 
+                    if (isNaN(expiryDate.getTime())) return true;
                     return today <= expiryDate;
                 });
-                
-                // 2. UPDATE COUNT
-                productCounter.innerHTML = `<i class="fa-solid fa-box"></i> ${allProducts.length} Products`;
 
-                // 3. DEEP LINKING (URL Share)
-                const hash = window.location.hash.substring(1); 
-                const urlParams = new URLSearchParams(hash);
-                const productLinkId = urlParams.get('product');
+                // 2. Clear Skeletons
+                productGrid.innerHTML = ''; 
 
-                if (productLinkId) {
-                    const linkedProduct = allProducts.filter(p => slugify(p.name) === productLinkId);
-                    if (linkedProduct.length > 0) {
-                        searchInput.value = linkedProduct[0].name;
-                        renderProducts(linkedProduct);
-                        return;
-                    }
+                if (activeProducts.length === 0) {
+                    productGrid.innerHTML = '<p style="color: var(--gray); text-align: center; width: 100%; grid-column: 1/-1;">New products are coming soon.</p>';
+                    return;
                 }
 
-                // 4. DEFAULT RENDER
-                renderProducts(allProducts);
+                // 3. Render Cards
+                activeProducts.forEach((product, index) => {
+                    let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
+                    const checkoutLink = selarLink.includes('?') 
+                        ? selarLink + '&add_to_cart=1' 
+                        : selarLink + '?add_to_cart=1';
+
+                    let imgUrl = product.image ? product.image.trim() : '';
+                    imgUrl = getDriveDirectLink(imgUrl);
+                    if (!imgUrl) imgUrl = FALLBACK_IMG;
+
+                    const rawPrice = product['price usd'];
+                    const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+
+                    const card = document.createElement('div');
+                    card.className = 'product-card reveal';
+                    card.style.transitionDelay = `${index * 0.1}s`; 
+
+                    card.innerHTML = `
+                        <div class="product-image-wrapper">
+                            <img src="${imgUrl}" alt="${product.name}" class="product-image" onerror="this.src='${FALLBACK_IMG}'">
+                        </div>
+                        <div class="product-info">
+                            <h3>${product.name || 'Untitled Product'}</h3>
+                            <p>${product.description || 'No description available.'}</p>
+                            <div class="product-meta">
+                                <span class="product-price">${formattedPrice}</span>
+                                <span class="product-category">Digital</span>
+                            </div>
+                            <a href="${checkoutLink}" target="_blank" class="btn-buy">
+                                GET ACCESS <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    `;
+                    productGrid.appendChild(card);
+                    observer.observe(card);
+                });
+            },
+            error: function(err) {
+                console.error('CSV Parse Error:', err);
+                productGrid.innerHTML = '<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1;">Error loading products.</p>';
             }
         });
     } catch (error) {
-        console.error('Error:', error);
-        grid.innerHTML = '<p style="color:red; text-align:center; grid-column:1/-1;">Error loading store.</p>';
+        console.error('Fetch Error:', error);
+        productGrid.innerHTML = '<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1;">Error connecting to store.</p>';
     }
 }
 
-// --- RENDER CARDS ---
-function renderProducts(products) {
-    grid.innerHTML = ''; 
+// --- FORM SUBMISSION (Fallback to Email) ---
+projectForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const service = document.getElementById('service').value;
+    const message = document.getElementById('message').value;
 
-    if (products.length === 0) {
-        grid.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-box-open"></i>
-                <h3>No products found</h3>
-                <p>Try searching for something else.</p>
-            </div>
-        `;
-        return;
-    }
-
-    products.forEach((product, index) => {
-        // Selar Link Logic
-        let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
-        const checkoutLink = selarLink.includes('?') 
-            ? selarLink + '&add_to_cart=1' 
-            : selarLink + '?add_to_cart=1';
-
-        const rawPrice = product['price usd'];
-        const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
-
-        // Image Logic
-        let imgUrl = product.image ? product.image.trim() : '';
-        imgUrl = getDriveDirectLink(imgUrl);
-        if (!imgUrl) imgUrl = FALLBACK_IMAGE;
-
-        // Share Link Logic
-        const slug = slugify(product.name);
-        const shareUrl = `${window.location.origin}${window.location.pathname}#product=${slug}`;
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        
-        // Apply Staggered Fade Up Animation
-        card.style.animationDelay = `${index * 0.05}s`;
-
-        card.innerHTML = `
-            <div class="image-wrapper">
-                <img src="${imgUrl}" alt="${product.name}" class="card-image" onerror="this.src='${FALLBACK_IMAGE}'">
-                <button class="share-btn" onclick="copyShareLink('${shareUrl}', this)" title="Copy Share Link">
-                    <i class="fa-solid fa-link"></i>
-                </button>
-            </div>
-            <div class="card-content">
-                <h3>${product.name || 'Untitled Product'}</h3>
-                <p class="description">${product.description || 'No description available.'}</p>
-                <div class="price-row">
-                    <div class="price">${formattedPrice}</div>
-                </div>
-                <a href="${checkoutLink}" target="_blank" class="buy-btn">
-                    Buy Now
-                </a>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-// --- SHARE BUTTON ---
-window.copyShareLink = function(url, btnElement) {
-    navigator.clipboard.writeText(url).then(() => {
-        const originalHTML = btnElement.innerHTML;
-        btnElement.innerHTML = '<i class="fa-solid fa-check" style="color: #4ade80;"></i>';
-        setTimeout(() => { btnElement.innerHTML = originalHTML; }, 2000);
-    }).catch(err => alert('Failed to copy link.'));
-};
-
-// --- SEARCH ---
-searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const filteredProducts = allProducts.filter(product => {
-        const name = (product.name || '').toLowerCase();
-        const desc = (product.description || '').toLowerCase();
-        return name.includes(searchTerm) || desc.includes(searchTerm);
-    });
-    renderProducts(filteredProducts);
+    const subject = encodeURIComponent(`New Project Request: ${service} from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nService: ${service}\n\nProject Details:\n${message}`);
+    
+    window.location.href = `mailto:nexorastudio5656@gmail.com?subject=${subject}&body=${body}`;
+    
+    setTimeout(() => {
+        projectForm.reset();
+        alert("Your email app has been opened to send the project request. If it didn't open, please email us directly at nexorastudio5656@gmail.com");
+    }, 1000);
 });
 
-// Start the app
+// --- INITIALIZE ---
 loadProducts();
