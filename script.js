@@ -28,10 +28,10 @@ window.addEventListener('scroll', () => {
 function toggleMenu(open) {
     if (open) {
         mobileMenu.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Lock background scroll
+        document.body.style.overflow = 'hidden';
     } else {
         mobileMenu.classList.remove('active');
-        document.body.style.overflow = ''; // Unlock background scroll
+        document.body.style.overflow = '';
     }
 }
 
@@ -84,11 +84,20 @@ function getDriveDirectLink(url) {
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- FETCH & RENDER PRODUCTS ---
+// --- FETCH & RENDER PRODUCTS (ROBUST VERSION) ---
 async function loadProducts() {
     try {
-        Papa.parse(CSV_URL, {
-            download: true,
+        // Use native fetch for better error handling
+        const response = await fetch(CSV_URL);
+        
+        // If Google blocks the request (e.g., not public), catch it here
+        if (!response.ok) {
+            throw new Error(`Google Sheet Error: Make sure the sheet is shared as "Anyone with the link". Status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
             header: true,
             skipEmptyLines: true,
             transformHeader: header => header.trim().toLowerCase(),
@@ -149,15 +158,14 @@ async function loadProducts() {
                     productGrid.appendChild(card);
                     observer.observe(card);
                 });
-            },
-            error: function(err) {
-                console.error('CSV Parse Error:', err);
-                productGrid.innerHTML = '<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1;">Error loading products.</p>';
             }
         });
     } catch (error) {
         console.error('Fetch Error:', error);
-        productGrid.innerHTML = '<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1;">Error connecting to store.</p>';
+        // This will print the exact reason on your screen
+        productGrid.innerHTML = `<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1; padding: 20px;">
+            Error: ${error.message}
+        </p>`;
     }
 }
 
