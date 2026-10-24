@@ -2,235 +2,697 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXORA STUDIOS | Digital Store</title>
-
-    <!-- Premium Fonts -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>NEXORA STUDIOS | Ideas. Designed Digitally.</title>
+    
+    <!-- SEO & Open Graph -->
+    <meta name="description" content="NEXORA STUDIOS is a digital creative brand turning ideas into digital experiences. Premium digital products, AI visuals, branding, and web development.">
+    <meta property="og:title" content="NEXORA STUDIOS | Digital Creative Studio">
+    <meta property="og:description" content="We turn ideas into digital experiences.">
+    <meta property="og:type" content="website">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- PapaParse -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
     <style>
+        /* --- REFINED DESIGN SYSTEM --- */
         :root {
-            --bg-dark: #09090b;
-            --card-bg: #121215;
-            --accent-blue: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --text-main: #ffffff;
-            --text-muted: #a1a1aa;
-            --border-color: #27272a;
+            --obsidian: #08090D;
+            --charcoal: #11131B;
+            --violet: #8B5CF6;
+            --cyan: #36D9FF;
+            --white: #FFFFFF;
+            --gray: #B4B4BC; /* Improved Contrast */
+            --border: rgba(255, 255, 255, 0.08);
+            
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
 
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-dark); 
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        body {
+            background-color: var(--obsidian);
+            color: var(--white);
+            font-family: var(--font-body);
+            line-height: 1.6;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- Ambient Background Glow (2D) --- */
-        .ambient-glow {
-            position: fixed;
-            top: -20vh;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100vw;
-            height: 50vh;
-            background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
-            z-index: -1;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: var(--charcoal); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+        .section-label {
+            font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, var(--violet), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Ambient Background */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden;
             pointer-events: none;
         }
+        .glow-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; }
+        .orb-1 { width: 50vw; height: 50vw; background: var(--violet); top: -20vh; left: -10vw; }
+        .orb-2 { width: 40vw; height: 40vw; background: var(--cyan); bottom: 10vh; right: -10vw; opacity: 0.15; }
 
-        /* --- Top Stats Bar --- */
-        .top-stats-bar {
-            display: flex; justify-content: flex-end; align-items: center;
-            padding: 8px 5%; background-color: #000000;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; color: var(--text-muted);
-            z-index: 101;
-        }
-        .stat-item { display: flex; align-items: center; gap: 6px; }
-        .stat-item i { color: var(--accent-blue); text-shadow: 0 0 8px var(--accent-glow); }
-
-        /* --- Navigation --- */
+        /* --- NAVIGATION --- */
         .navbar {
-            position: sticky; top: 0; width: 100%; padding: 15px 5%;
+            position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color); z-index: 100; gap: 15px;
+            z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
         }
-
-        .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; }
-        .logo span { color: var(--accent-blue); text-shadow: 0 0 15px var(--accent-glow); }
-
-        .search-container { flex-grow: 1; position: relative; max-width: 400px; }
-        .search-container i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;}
-        .search-container input {
-            width: 100%; padding: 12px 20px 12px 45px; border-radius: 50px;
-            background: #18181b; border: 1px solid var(--border-color); color: white;
-            font-size: 0.95rem; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;
+        .navbar.scrolled {
+            background: rgba(8, 9, 13, 0.85); backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border); padding: 16px 5%;
         }
-        .search-container input:focus { border-color: var(--accent-blue); background: #1f1f23; box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
-
-        .contact-btn {
-            font-size: 0.9rem; color: var(--text-muted); text-decoration: none; font-weight: 500;
-            display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: color 0.3s;
-        }
-        .contact-btn:hover { color: white; }
-
-        /* --- Hero Section --- */
-        .hero { text-align: center; padding: 60px 20px 40px; max-width: 800px; margin: 0 auto; }
-        .badge {
-            display: inline-block; padding: 6px 16px; border-radius: 50px;
-            background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
-            color: #60a5fa; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px; margin-bottom: 20px; text-transform: uppercase;
-        }
-        .hero h2 { 
-            font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); 
-            font-weight: 800; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px;
-        }
-        .hero h2 span { background: linear-gradient(to right, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto; }
-
-        /* --- Product Grid --- */
-        .grid { 
-            display: grid; grid-template-columns: 1fr; 
-            gap: 25px; max-width: 1200px; margin: 0 auto 80px; padding: 0 20px; width: 100%; flex-grow: 1;
-        }
-
-        /* --- Modern Flat Cards --- */
-        .card { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; 
-            overflow: hidden; display: flex; flex-direction: column; position: relative;
-            opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s forwards;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-        }
-
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-
-        .image-wrapper { width: 100%; height: 200px; overflow: hidden; border-bottom: 1px solid var(--border-color); position: relative; }
-        .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-
-        .share-btn {
-            position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.2); color: white; width: 36px; height: 36px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: background 0.2s;
-        }
-        .share-btn:hover { background: var(--accent-blue); }
-
-        .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card h3 { font-family: 'Plus Jakarta Sans', sans-serif; margin: 0 0 10px 0; font-size: 1.3rem; font-weight: 700; }
-        .description { 
-            color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; 
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-        }
-
-        .price-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: white; font-size: 1.6rem; }
-
-        /* Flat Button */
-        .buy-btn { 
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--accent-blue); color: white; padding: 14px 24px; text-decoration: none; 
-            border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; 
-            font-size: 0.95rem; transition: all 0.3s ease; 
-        }
-        .buy-btn:hover { background: #2563eb; box-shadow: 0 0 20px var(--accent-glow); }
-
-        /* --- Empty State --- */
-        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); grid-column: 1 / -1; }
-        .empty-state i { font-size: 3rem; margin-bottom: 15px; color: var(--border-color); }
-
-        /* --- Footer --- */
-        .footer { text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color); background: #09090b; }
-        .footer p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+        .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--white); text-decoration: none; }
+        .logo span { color: var(--violet); }
         
-        .footer a.wa-link {
-            display: inline-flex; align-items: center; gap: 10px; color: white; text-decoration: none; font-weight: 600;
-            padding: 12px 24px; border-radius: 50px; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); 
-            transition: background 0.3s;
+        .nav-links { display: none; gap: 40px; }
+        .nav-links a { color: var(--gray); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--white); }
+        
+        .nav-cta {
+            display: none; padding: 12px 28px; border-radius: 4px; background: var(--white); color: var(--obsidian);
+            text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: var(--transition);
         }
-        .footer a.wa-link:hover { background: rgba(37, 211, 102, 0.2); }
-        .footer a.wa-link i { color: #25D366; font-size: 1.2rem; }
+        .nav-cta:hover { background: var(--violet); color: var(--white); box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
 
-        /* --- UPDATED: Floating WhatsApp Button --- */
-        .floating-contact {
-            position: fixed; bottom: 20px; right: 20px; 
-            background: #25D366; /* WhatsApp Green */
-            color: white;
-            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.4); z-index: 1000;
-            transition: transform 0.3s, background 0.3s; text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
+        .mobile-menu-btn { display: block; color: var(--white); font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 10px; }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.98);
+            backdrop-filter: blur(10px); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
+            opacity: 0; pointer-events: none; transition: var(--transition);
         }
-        .floating-contact:hover { transform: scale(1.1); background: #1ebe5d; }
+        .mobile-menu.active { opacity: 1; pointer-events: all; }
+        .mobile-menu a { color: var(--white); font-family: var(--font-heading); font-size: 2.5rem; text-decoration: none; font-weight: 700; }
+        .close-menu { position: absolute; top: 24px; right: 5%; font-size: 2rem; color: var(--white); cursor: pointer; background: none; border: none; padding: 10px; }
 
-        /* --- Desktop Enhancements --- */
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            padding: 140px 5% 80px; position: relative; overflow: hidden;
+        }
+        .hero-content { max-width: 800px; z-index: 2; position: relative; }
+        .hero-label { font-size: 0.8rem; letter-spacing: 2px; color: var(--gray); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 500; }
+        .hero-label span { color: var(--cyan); font-size: 0.6rem; animation: pulse 2s infinite; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        .hero h1 {
+            font-size: clamp(3.5rem, 8vw, 6.5rem); line-height: 1.05; margin-bottom: 32px;
+            text-transform: uppercase; letter-spacing: -2px;
+        }
+        .hero p { font-size: 1.1rem; color: var(--gray); max-width: 540px; margin-bottom: 48px; font-weight: 300; }
+        
+        .hero-actions { display: flex; flex-direction: column; gap: 16px; }
+        .btn-primary {
+            display: inline-flex; justify-content: center; align-items: center; gap: 12px;
+            padding: 18px 36px; background: linear-gradient(135deg, var(--violet), #6D28D9);
+            color: var(--white); text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.1); transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .btn-primary::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            opacity: 0; transition: var(--transition);
+        }
+        .btn-primary:hover { box-shadow: 0 0 40px rgba(139, 92, 246, 0.5); transform: translateY(-2px); }
+        .btn-primary:hover::after { opacity: 1; }
+        .btn-primary i { transition: transform 0.3s; }
+        .btn-primary:hover i { transform: translateX(5px); }
+        
+        .btn-secondary {
+            display: inline-flex; justify-content: center; align-items: center; gap: 12px;
+            padding: 18px 36px; background: transparent; color: var(--white); text-decoration: none;
+            border-radius: 4px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--border); transition: var(--transition);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--gray); }
+
+        /* Premium Hero Visual (Desktop) */
+        .hero-visual {
+            display: none;
+            position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
+            width: 500px; height: 500px; z-index: 1;
+            perspective: 1000px;
+        }
+        
+        .visual-card {
+            position: absolute; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            transform-style: preserve-3d; transition: transform 0.1s ease;
+        }
+
+        .vc-main {
+            width: 320px; height: 400px; top: 50px; right: 50px;
+            display: flex; flex-direction: column; padding: 30px;
+            border-top: 2px solid var(--cyan); border-right: 2px solid var(--violet);
+        }
+        .vc-header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .vc-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+        .vc-dot.active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+        
+        .vc-line { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-bottom: 16px; }
+        .vc-line.w-75 { width: 75%; } .vc-line.w-50 { width: 50%; } .vc-line.w-100 { width: 100%; }
+        
+        .vc-graph {
+            flex-grow: 1; margin-top: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-left: 1px solid rgba(255,255,255,0.1); position: relative;
+            display: flex; align-items: flex-end; gap: 10px; padding: 0 10px;
+        }
+        .vc-bar { width: 30px; background: linear-gradient(to top, var(--violet), var(--cyan)); border-radius: 4px 4px 0 0; opacity: 0.8; }
+        
+        .vc-sub {
+            width: 200px; height: 250px; bottom: 50px; left: 0;
+            transform: rotateY(20deg) translateZ(-50px);
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+        }
+        .vc-sub-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(139, 92, 246, 0.2); border: 1px solid var(--violet); }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute; bottom: 40px; left: 5%; display: flex; align-items: center; gap: 12px;
+            color: var(--gray); font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+        }
+        .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
+        .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: var(--cyan); animation: scrollDown 2s infinite cubic-bezier(0.65, 0, 0.35, 1); }
+        @keyframes scrollDown { 0% { top: -50%; } 100% { top: 100%; } }
+
+        /* --- SERVICES SECTION --- */
+        .services { padding: 120px 5%; border-top: 1px solid var(--border); }
+        .services-header { max-width: 700px; margin-bottom: 80px; }
+        .services-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 24px; }
+        .services-header p { color: var(--gray); font-size: 1.1rem; font-weight: 300; }
+
+        .services-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+        .service-card {
+            background: var(--charcoal); border: 1px solid var(--border); border-radius: 12px;
+            padding: 40px; transition: var(--transition); position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), transparent 60%);
+            opacity: 0; transition: var(--transition);
+        }
+        .service-card:hover { border-color: rgba(139, 92, 246, 0.4); transform: translateY(-5px); }
+        .service-card:hover::before { opacity: 1; }
+        
+        .service-num { font-family: var(--font-heading); color: var(--violet); font-size: 0.9rem; margin-bottom: 24px; font-weight: 700; }
+        .service-card h3 { font-size: 1.5rem; margin-bottom: 16px; }
+        .service-card p { color: var(--gray); font-size: 0.95rem; font-weight: 300; }
+
+        /* --- MARKETPLACE SECTION --- */
+        .marketplace { padding: 120px 5%; background: var(--charcoal); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .marketplace-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; flex-wrap: wrap; gap: 24px; }
+        .marketplace-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+        
+        .product-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        
+        .product-card {
+            background: var(--obsidian); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; transition: var(--transition); display: flex; flex-direction: column;
+        }
+        .product-card:hover { border-color: var(--cyan); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .product-image-wrapper { width: 100%; height: 240px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+        .product-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .product-card:hover .product-image { transform: scale(1.05); }
+        
+        .product-info { padding: 32px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-info h3 { font-size: 1.4rem; margin-bottom: 12px; }
+        .product-info p { color: var(--gray); font-size: 0.95rem; margin-bottom: 24px; flex-grow: 1; font-weight: 300; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .product-price { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--white); }
+        .product-category { font-size: 0.75rem; color: var(--cyan); border: 1px solid rgba(54, 217, 255, 0.3); padding: 4px 12px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .btn-buy {
+            display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;
+            padding: 16px; background: transparent; border: 1px solid var(--border); color: var(--white);
+            text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: var(--transition);
+        }
+        .btn-buy:hover { background: var(--white); color: var(--obsidian); }
+
+        /* Skeleton Loader */
+        .skeleton-card { background: var(--obsidian); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .skeleton-img { width: 100%; height: 240px; background: #1A1D27; }
+        .skeleton-text { height: 20px; background: #1A1D27; margin: 20px 32px 10px; border-radius: 4px; }
+        .skeleton-text.short { width: 50%; margin-bottom: 30px; }
+        .shimmer { animation: shimmer 1.5s infinite linear; background: linear-gradient(90deg, #1A1D27 25%, #252836 50%, #1A1D27 75%); background-size: 200% 100%; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* --- BRAND STATEMENT --- */
+        .brand-statement { padding: 180px 5%; text-align: center; position: relative; overflow: hidden; }
+        .brand-statement h2 { font-size: clamp(3rem, 7vw, 6rem); line-height: 1.05; margin-bottom: 40px; text-transform: uppercase; }
+        .brand-statement p { max-width: 600px; margin: 0 auto; color: var(--gray); font-size: 1.2rem; font-weight: 300; }
+
+        /* --- PROCESS SECTION --- */
+        .process { padding: 120px 5%; border-top: 1px solid var(--border); }
+        .process-header { text-align: center; margin-bottom: 80px; }
+        .process-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+        
+        .timeline { display: flex; flex-direction: column; gap: 40px; max-width: 900px; margin: 0 auto; }
+        .step { display: flex; gap: 24px; position: relative; }
+        .step-num {
+            font-family: var(--font-heading); font-size: 1.2rem; color: var(--cyan);
+            background: rgba(54, 217, 255, 0.05); border: 1px solid rgba(54, 217, 255, 0.2);
+            width: 60px; height: 60px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+        }
+        .step-content h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .step-content p { color: var(--gray); font-size: 0.95rem; font-weight: 300; }
+
+        /* --- CONTACT SECTION --- */
+        .contact { padding: 120px 5%; background: var(--charcoal); border-top: 1px solid var(--border); }
+        .contact-grid { display: grid; grid-template-columns: 1fr; gap: 60px; }
+        
+        .contact-info h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 24px; }
+        .contact-info p { color: var(--gray); margin-bottom: 40px; font-weight: 300; }
+        
+        .contact-methods { display: flex; flex-direction: column; gap: 16px; }
+        .contact-link {
+            display: flex; align-items: center; gap: 16px; color: var(--white); text-decoration: none;
+            padding: 20px; background: var(--obsidian); border: 1px solid var(--border); border-radius: 8px;
+            transition: var(--transition);
+        }
+        .contact-link:hover { border-color: var(--violet); background: rgba(139, 92, 246, 0.05); }
+        .contact-link i { color: var(--violet); font-size: 1.5rem; }
+        .contact-link div { display: flex; flex-direction: column; }
+        .contact-link span { font-size: 0.75rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; }
+        .contact-link strong { font-size: 1rem; font-weight: 500; }
+
+        .contact-form { display: flex; flex-direction: column; gap: 24px; background: var(--obsidian); padding: 40px; border-radius: 12px; border: 1px solid var(--border); }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; color: var(--gray); font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 16px; background: var(--charcoal); border: 1px solid var(--border);
+            border-radius: 6px; color: var(--white); font-family: var(--font-body); outline: none;
+            transition: var(--transition); font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(54, 217, 255, 0.1); }
+
+        /* --- WHATSAPP SECTION --- */
+        .whatsapp-section { padding: 100px 5%; text-align: center; border-top: 1px solid var(--border); }
+        .whatsapp-box {
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.08), rgba(37, 211, 102, 0.01));
+            border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 20px; padding: 80px 20px;
+            max-width: 900px; margin: 0 auto; position: relative; overflow: hidden;
+        }
+        /* THIS IS THE LINE YOU WERE FIXING */
+        .whatsapp-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(37,211,102,0.1) 0%, transparent 60%); pointer-events: none; }
+        .whatsapp-box h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 20px; position: relative; z-index: 1; }
+        .whatsapp-box p { color: var(--gray); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; }
+        .btn-wa {
+            display: inline-flex; align-items: center; gap: 12px; padding: 18px 36px;
+            background: #25D366; color: var(--white); text-decoration: none; border-radius: 4px;
+            font-weight: 600; font-size: 0.95rem; transition: var(--transition); position: relative; z-index: 1;
+        }
+        .btn-wa:hover { background: #1EBE5A; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3); }
+
+        /* --- FOOTER --- */
+        .footer { padding: 80px 5% 40px; background: var(--obsidian); border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
+        .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
+        .footer-brand p { color: var(--gray); font-size: 0.9rem; max-width: 300px; font-weight: 300; }
+        
+        .footer-links h4 { font-size: 0.9rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; color: var(--white); }
+        .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a { color: var(--gray); text-decoration: none; font-size: 0.9rem; transition: var(--transition); font-weight: 300; }
+        .footer-links a:hover { color: var(--cyan); }
+
+        .footer-bottom {
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            padding-top: 32px; border-top: 1px solid var(--border); color: var(--gray); font-size: 0.8rem;
+        }
+
+        /* --- SCROLL REVEAL --- */
+        .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* --- MEDIA QUERIES (DESKTOP) --- */
         @media (min-width: 768px) {
-            .navbar { padding: 20px 5%; }
-            .grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
-            .card-image { height: 220px; }
+            .nav-links { display: flex; }
+            .nav-cta { display: inline-block; }
+            .mobile-menu-btn { display: none; }
             
-            .card:hover { transform: translateY(-8px); border-color: #3f3f46; box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.1); }
-            .card:hover .card-image { transform: scale(1.05); }
+            .hero { flex-direction: row; align-items: center; justify-content: space-between; }
+            .hero-content { max-width: 55%; }
+            .hero-actions { flex-direction: row; }
+            .hero-visual { display: block; }
+            
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .service-card:nth-child(1) { grid-column: span 2; }
+            .service-card:nth-child(4) { grid-column: span 2; }
+            .service-card:nth-child(1), .service-card:nth-child(4) { justify-content: center; min-height: 250px; }
+
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            
+            .timeline { flex-direction: row; justify-content: space-between; gap: 20px; }
+            .step { flex-direction: column; align-items: center; text-align: center; flex: 1; }
+            .step::before { content: ''; position: absolute; top: 30px; left: calc(50% + 30px); width: calc(100% - 60px); height: 1px; background: var(--border); z-index: -1; }
+            .step:last-child::before { display: none; }
+            
+            .contact-grid { grid-template-columns: 1fr 1fr; }
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+            .footer-bottom { flex-direction: row; justify-content: space-between; }
+        }
+
+        @media (min-width: 1024px) {
+            .product-grid { grid-template-columns: repeat(3, 1fr); }
+            .services-grid { grid-template-columns: repeat(3, 1fr); }
+            .service-card:nth-child(1) { grid-column: span 2; }
+            .service-card:nth-child(4) { grid-column: span 1; }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { transition: none; opacity: 1; transform: none; }
+            .visual-card { animation: none; }
+            html { scroll-behavior: auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="ambient-glow"></div>
-
-    <div class="top-stats-bar">
-        <div class="stat-item" id="product-counter">
-            <i class="fa-solid fa-box"></i> Loading...
-        </div>
+    <!-- Ambient Background -->
+    <div class="ambient-bg">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
     </div>
 
-    <nav class="navbar">
-        <div class="logo">NEX<span>O</span>RA</div>
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" placeholder="Search digital products...">
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="logo" aria-label="Nexora Studios Home">NEXORA<span>.</span></a>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#services">Services</a>
+            <a href="#products">Products</a>
+            <a href="#contact">Contact</a>
         </div>
-        <a href="mailto:nexorastudio5656@gmail.com" class="contact-btn">
-            <i class="fa-regular fa-envelope"></i> Contact
-        </a>
+        <a href="#contact" class="nav-cta">LET'S CREATE ↗</a>
+        <button class="mobile-menu-btn" id="menuBtn" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
     </nav>
 
-    <section class="hero">
-        <div class="badge">Nexora Studios</div>
-        <h2>Ideas. Designed <span>Digitally.</span></h2>
-        <p>Premium digital assets and tools curated for creators, students, and professionals.</p>
-    </section>
-
-    <div class="grid" id="product-grid">
-        <div class="skeleton-card" style="height:380px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite;"></div>
-        <div class="skeleton-card" style="height:380px; background:#121215; border-radius:20px; animation: pulse 1.5s infinite; animation-delay: 0.2s;"></div>
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu" id="closeMenu" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
+        <a href="#home" class="mobile-link">Home</a>
+        <a href="#services" class="mobile-link">Services</a>
+        <a href="#products" class="mobile-link">Products</a>
+        <a href="#contact" class="mobile-link">Contact</a>
     </div>
 
-    <footer class="footer">
-        <p>© <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-label"><span>●</span> NEXORA STUDIOS / DIGITAL CREATIVE STUDIO</div>
+            <h1>WE TURN IDEAS<br>INTO <span class="text-gradient">DIGITAL</span><br>EXPERIENCES.</h1>
+            <p>Digital products, creative design, intelligent tools, and digital solutions built to move your ideas forward.</p>
+            <div class="hero-actions">
+                <a href="#products" class="btn-primary">EXPLORE OUR WORLD <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="#services" class="btn-secondary">DISCOVER SERVICES</a>
+            </div>
+        </div>
         
-        <!-- WhatsApp Channel Link -->
-        <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank" class="wa-link">
-            <i class="fa-brands fa-whatsapp"></i> Join our WhatsApp Channel
-        </a>
-    </footer>
+        <!-- Premium Hero Visual (Desktop) -->
+        <div class="hero-visual" id="heroVisual">
+            <div class="visual-card vc-sub">
+                <div class="vc-sub-circle"></div>
+                <div class="vc-line w-75"></div>
+                <div class="vc-line w-50"></div>
+                <div class="vc-line w-100"></div>
+                <div class="vc-line w-75"></div>
+            </div>
+            <div class="visual-card vc-main">
+                <div class="vc-header">
+                    <div class="vc-dot"></div>
+                    <div class="vc-dot active"></div>
+                    <div class="vc-dot"></div>
+                </div>
+                <div class="vc-line w-50"></div>
+                <div class="vc-line w-75"></div>
+                <div class="vc-graph">
+                    <div class="vc-bar" style="height: 40%"></div>
+                    <div class="vc-bar" style="height: 70%"></div>
+                    <div class="vc-bar" style="height: 50%"></div>
+                    <div class="vc-bar" style="height: 90%"></div>
+                    <div class="vc-bar" style="height: 60%"></div>
+                </div>
+            </div>
+        </div>
 
-    <!-- UPDATED: Floating WhatsApp Button (Links to your number) -->
-    <a href="https://wa.me/2349022077839" target="_blank" class="floating-contact" title="Chat with us on WhatsApp">
-        <i class="fa-brands fa-whatsapp"></i>
-    </a>
+        <div class="scroll-indicator">
+            <div class="scroll-line"></div>
+            SCROLL
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="services-header reveal">
+            <div class="section-label">WHAT WE DO</div>
+            <h2>CREATIVE THINKING.<br>DIGITAL EXECUTION.</h2>
+            <p>From the first idea to the final deliverable, we help turn concepts into useful digital products and experiences.</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <div class="service-num">01</div>
+                <h3>DIGITAL PRODUCTS</h3>
+                <p>Downloadable guides, templates, toolkits, and resources designed to help people work smarter.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.1s;">
+                <div class="service-num">02</div>
+                <h3>BRAND & LOGO DESIGN</h3>
+                <p>Distinctive visual identities, logos, and branding assets for businesses and creators.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.2s;">
+                <div class="service-num">03</div>
+                <h3>AI GRAPHICS & VISUALS</h3>
+                <p>AI-assisted artwork, promotional graphics, and creative digital imagery.</p>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-num">04</div>
+                <h3>WEBSITE DEVELOPMENT</h3>
+                <p>Modern, responsive websites and digital storefronts for creators, businesses, and entrepreneurs.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.1s;">
+                <div class="service-num">05</div>
+                <h3>PROFESSIONAL DOCUMENTS</h3>
+                <p>CVs, cover letters, business proposals, presentations, brochures, and other custom documents.</p>
+            </div>
+            <div class="service-card reveal" style="transition-delay: 0.2s;">
+                <div class="service-num">06</div>
+                <h3>CUSTOM DIGITAL SOLUTIONS</h3>
+                <p>Tailored creative and digital work based on individual project requirements.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketplace Section -->
+    <section class="marketplace" id="products">
+        <div class="marketplace-header reveal">
+            <div>
+                <div class="section-label">THE DIGITAL COLLECTION</div>
+                <h2>TOOLS FOR YOUR<br>NEXT BIG IDEA.</h2>
+            </div>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+            <!-- Skeleton Loaders -->
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brand Statement -->
+    <section class="brand-statement reveal">
+        <h2>YOUR IDEAS DESERVE<br>MORE THAN <span class="text-gradient">ORDINARY.</span></h2>
+        <p>At NEXORA STUDIOS, creativity meets technology. We transform ideas into digital products, visuals, and experiences designed to help people create, communicate, and grow.</p>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process">
+        <div class="process-header reveal">
+            <div class="section-label" style="justify-content: center;">HOW WE WORK</div>
+            <h2>FROM CONCEPT TO CREATION.</h2>
+        </div>
+        
+        <div class="timeline">
+            <div class="step reveal">
+                <div class="step-num">01</div>
+                <div class="step-content">
+                    <h3>DISCOVER</h3>
+                    <p>We understand the idea, goal, and requirements.</p>
+                </div>
+            </div>
+            <div class="step reveal" style="transition-delay: 0.1s;">
+                <div class="step-num">02</div>
+                <div class="step-content">
+                    <h3>DESIGN</h3>
+                    <p>We shape the concept into a clear creative direction.</p>
+                </div>
+            </div>
+            <div class="step reveal" style="transition-delay: 0.2s;">
+                <div class="step-num">03</div>
+                <div class="step-content">
+                    <h3>CREATE</h3>
+                    <p>We build the digital product, visual, document, or website.</p>
+                </div>
+            </div>
+            <div class="step reveal" style="transition-delay: 0.3s;">
+                <div class="step-num">04</div>
+                <div class="step-content">
+                    <h3>DELIVER</h3>
+                    <p>We provide the completed work and relevant delivery instructions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact / Custom Project -->
+    <section class="contact" id="contact">
+        <div class="contact-grid">
+            <div class="contact-info reveal">
+                <div class="section-label">GET IN TOUCH</div>
+                <h2>HAVE AN IDEA?<br>LET'S BUILD IT.</h2>
+                <p>Tell us what you're trying to create. We'll help you explore a digital solution that fits your needs and budget.</p>
+                
+                <div class="contact-methods">
+                    <a href="mailto:nexorastudio5656@gmail.com" class="contact-link">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <span>Email Us</span>
+                            <strong>nexorastudio5656@gmail.com</strong>
+                        </div>
+                    </a>
+                    <a href="https://wa.me/2349022077839" target="_blank" class="contact-link">
+                        <i class="fa-brands fa-whatsapp"></i>
+                        <div>
+                            <span>WhatsApp</span>
+                            <strong>+234 902 207 7839</strong>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <form class="contact-form reveal" id="projectForm">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="john@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="service">Service Required</label>
+                    <select id="service">
+                        <option>Digital Products</option>
+                        <option>Brand & Logo Design</option>
+                        <option>AI Graphics & Visuals</option>
+                        <option>Website Development</option>
+                        <option>Professional Documents</option>
+                        <option>Custom Solution</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Project Description</label>
+                    <textarea id="message" rows="4" required placeholder="Tell us about your idea..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary" style="border: none; cursor: pointer; font-family: var(--font-body); width: 100%;">
+                    SEND REQUEST <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- WhatsApp Section -->
+    <section class="whatsapp-section">
+        <div class="whatsapp-box reveal">
+            <h2>STAY CONNECTED TO WHAT'S NEXT.</h2>
+            <p>Follow NEXORA STUDIOS for digital resources, creative inspiration, new releases, useful tips, and studio updates.</p>
+            <a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank" class="btn-wa">
+                <i class="fa-brands fa-whatsapp"></i> FOLLOW OUR WHATSAPP CHANNEL
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>NEXORA<span style="color: var(--violet);">.</span></h3>
+                <p>Ideas. Designed Digitally.<br><br>Premium digital assets and creative solutions for the modern world.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#services">Digital Products</a></li>
+                    <li><a href="#services">Brand Design</a></li>
+                    <li><a href="#services">Web Development</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="mailto:nexorastudio5656@gmail.com">Email Us</a></li>
+                    <li><a href="https://wa.me/2349022077839" target="_blank">WhatsApp</a></li>
+                    <li><a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank">Channel</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
+            <p>Designed & Built by NEXORA STUDIOS</p>
+        </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
