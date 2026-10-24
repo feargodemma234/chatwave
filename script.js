@@ -8,45 +8,41 @@ const menuBtn = document.getElementById('menuBtn');
 const closeMenu = document.getElementById('closeMenu');
 const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
-const productGrid = document.getElementById('product-grid');
+const productGrid = document.getElementById('product-grid'); // <-- This will be null on index.html
 const projectForm = document.getElementById('projectForm');
 
 // --- AUTO UPDATE YEAR ---
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // --- NAVBAR SCROLL EFFECT ---
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-});
-
-// --- MOBILE MENU (WITH SCROLL LOCK) ---
-function toggleMenu(open) {
-    if (open) {
-        mobileMenu.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Lock background scroll
-    } else {
-        mobileMenu.classList.remove('active');
-        document.body.style.overflow = ''; // Unlock background scroll
-    }
+if (navbar) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
 }
 
-menuBtn.addEventListener('click', () => toggleMenu(true));
-closeMenu.addEventListener('click', () => toggleMenu(false));
-mobileLinks.forEach(link => {
-    link.addEventListener('click', () => toggleMenu(false));
-});
+// --- MOBILE MENU ---
+if (menuBtn) {
+    function toggleMenu(open) {
+        if (open) {
+            mobileMenu.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+    menuBtn.addEventListener('click', () => toggleMenu(true));
+    closeMenu.addEventListener('click', () => toggleMenu(false));
+    mobileLinks.forEach(link => link.addEventListener('click', () => toggleMenu(false)));
+}
 
 // --- SCROLL REVEAL ANIMATIONS ---
-const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.1
-};
-
+const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
 const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -67,13 +63,13 @@ function getDriveDirectLink(url) {
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- FETCH & RENDER PRODUCTS (ROBUST VERSION) ---
+// --- FETCH & RENDER PRODUCTS (Only runs on products.html) ---
 async function loadProducts() {
+    // If the product grid doesn't exist on this page, stop the function.
+    if (!productGrid) return; 
+
     try {
-        // Use native fetch for better error handling
         const response = await fetch(CSV_URL);
-        
-        // If Google blocks the request (e.g., not public), catch it here
         if (!response.ok) {
             throw new Error(`Google Sheet Error: Make sure the sheet is shared as "Anyone with the link". Status: ${response.status}`);
         }
@@ -88,7 +84,6 @@ async function loadProducts() {
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
-                // 1. Filter Expired Products
                 const activeProducts = results.data.filter(product => {
                     if (!product.expiry || product.expiry.trim() === '') return true;
                     const expiryDate = new Date(product.expiry);
@@ -96,7 +91,6 @@ async function loadProducts() {
                     return today <= expiryDate;
                 });
 
-                // 2. Clear Skeletons
                 productGrid.innerHTML = ''; 
 
                 if (activeProducts.length === 0) {
@@ -104,7 +98,6 @@ async function loadProducts() {
                     return;
                 }
 
-                // 3. Render Cards
                 activeProducts.forEach((product, index) => {
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
                     const checkoutLink = selarLink.includes('?') 
@@ -145,32 +138,33 @@ async function loadProducts() {
         });
     } catch (error) {
         console.error('Fetch Error:', error);
-        // This will print the exact reason on your screen
         productGrid.innerHTML = `<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1; padding: 20px;">
             Error: ${error.message}
         </p>`;
     }
 }
 
-// --- FORM SUBMISSION (Fallback to Email) ---
-projectForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const service = document.getElementById('service').value;
-    const message = document.getElementById('message').value;
+// --- FORM SUBMISSION ---
+if (projectForm) {
+    projectForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const service = document.getElementById('service').value;
+        const message = document.getElementById('message').value;
 
-    const subject = encodeURIComponent(`New Project Request: ${service} from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nService: ${service}\n\nProject Details:\n${message}`);
-    
-    window.location.href = `mailto:nexorastudio5656@gmail.com?subject=${subject}&body=${body}`;
-    
-    setTimeout(() => {
-        projectForm.reset();
-        alert("Your email app has been opened to send the project request. If it didn't open, please email us directly at nexorastudio5656@gmail.com");
-    }, 1000);
-});
+        const subject = encodeURIComponent(`New Project Request: ${service} from ${name}`);
+        const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nService: ${service}\n\nProject Details:\n${message}`);
+        
+        window.location.href = `mailto:nexorastudio5656@gmail.com?subject=${subject}&body=${body}`;
+        
+        setTimeout(() => {
+            projectForm.reset();
+            alert("Your email app has been opened to send the project request. If it didn't open, please email us directly at nexorastudio5656@gmail.com");
+        }, 1000);
+    });
+}
 
 // --- INITIALIZE ---
 loadProducts();
