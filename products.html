@@ -9,11 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
         :root {
             --bg-fallback: #F3F4F6;
-            --bg-card: rgba(255, 255, 255, 0.75);
+            --bg-card: rgba(255, 255, 255, 0.85);
             --text-main: #11131B;
             --text-muted: #4B5563;
             --violet: #7C3AED;
@@ -30,17 +31,35 @@
         
         body {
             background-color: var(--bg-fallback);
-            background-image: url('bg-light.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            
             color: var(--text-main);
             font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LIVE VIDEO BACKGROUND --- */
+        #bg-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -2; 
+            opacity: 0.9; 
+            background-color: var(--bg-fallback); 
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            z-index: -1;
+            pointer-events: none;
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -61,7 +80,7 @@
             position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%;
             display: flex; justify-content: space-between; align-items: center;
             z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             box-shadow: 0 4px 30px rgba(0,0,0,0.03);
         }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
@@ -131,7 +150,7 @@
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* --- FOOTER --- */
-        .footer { padding: 80px 5% 40px; background: rgba(255,255,255,0.7); border-top: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .footer { padding: 80px 5% 40px; background: rgba(255,255,255,0.8); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
         .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; }
@@ -155,6 +174,14 @@
     </style>
 </head>
 <body>
+
+    <!-- 13s Live Background Video -->
+    <video autoplay loop muted playsinline id="bg-video">
+        <source id="bg-video-source" src="" type="video/mp4">
+    </video>
+    
+    <!-- Frosted glass overlay to keep text readable -->
+    <div class="video-overlay"></div>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -245,7 +272,6 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
