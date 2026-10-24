@@ -11,8 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- PapaParse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
@@ -50,8 +48,8 @@
             height: 100vh;
             object-fit: cover;
             z-index: -2; 
-            opacity: 0.9; 
-            background-color: var(--bg-fallback); /* Shows while video loads */
+            opacity: 1; 
+            background-color: var(--bg-fallback); 
         }
         
         .video-overlay {
@@ -59,9 +57,9 @@
             top: 0; left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(255, 255, 255, 0.85); /* Frosted glass effect */
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(2px); 
+            -webkit-backdrop-filter: blur(2px);
             z-index: -1;
             pointer-events: none;
         }
@@ -85,23 +83,28 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* --- NAVIGATION --- */
+        /* --- UPDATED: BLENDED NAVIGATION --- */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
+            z-index: 1000; transition: var(--transition); 
+            background: transparent; /* Transparent at the top */
+            border-bottom: 1px solid transparent;
         }
         .navbar.scrolled {
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border); padding: 16px 5%;
+            background: rgba(255, 255, 255, 0.5); /* Frosted glass on scroll */
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border); 
+            padding: 16px 5%;
             box-shadow: 0 4px 30px rgba(0,0,0,0.03);
         }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
         .logo span { color: var(--violet); }
         
         .nav-links { display: none; gap: 40px; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links a:hover { color: var(--text-main); }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--violet); }
         
         .nav-cta {
             display: none; padding: 12px 28px; border-radius: 4px; background: var(--text-main); color: #fff;
@@ -137,7 +140,7 @@
             font-size: clamp(3.5rem, 8vw, 6.5rem); line-height: 1.05; margin-bottom: 32px;
             text-transform: uppercase; letter-spacing: -2px;
         }
-        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 540px; margin-bottom: 48px; font-weight: 400; }
+        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 540px; margin-bottom: 48px; font-weight: 500; }
         
         .hero-actions { display: flex; flex-direction: column; gap: 16px; }
         .btn-primary {
@@ -151,7 +154,7 @@
         .btn-secondary {
             display: inline-flex; justify-content: center; align-items: center; gap: 12px;
             padding: 18px 36px; background: transparent; color: var(--text-main); text-decoration: none;
-            border-radius: 4px; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(0,0,0,0.2); transition: var(--transition);
+            border-radius: 4px; font-weight: 600; font-size: 0.9rem; border: 1px solid rgba(0,0,0,0.3); transition: var(--transition);
         }
         .btn-secondary:hover { background: rgba(0,0,0,0.05); border-color: var(--text-main); }
 
@@ -163,8 +166,8 @@
         }
         
         .visual-card {
-            position: absolute; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08);
-            background: rgba(255,255,255,0.6);
+            position: absolute; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.7);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.08);
         }
 
@@ -186,7 +189,7 @@
         .vc-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(0,0,0,0.1); }
         .vc-dot.active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
         
-        .vc-line { height: 8px; background: rgba(0,0,0,0.06); border-radius: 4px; margin-bottom: 16px; }
+        .vc-line { height: 8px; background: rgba(0,0,0,0.08); border-radius: 4px; margin-bottom: 16px; }
         .vc-line.w-75 { width: 75%; } .vc-line.w-50 { width: 50%; } .vc-line.w-100 { width: 100%; }
         
         .vc-graph {
@@ -200,7 +203,7 @@
             position: absolute; bottom: 40px; left: 5%; display: none; align-items: center; gap: 12px;
             color: var(--text-muted); font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
         }
-        .scroll-line { width: 1px; height: 50px; background: rgba(0,0,0,0.1); position: relative; overflow: hidden; }
+        .scroll-line { width: 1px; height: 50px; background: rgba(0,0,0,0.2); position: relative; overflow: hidden; }
         .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: var(--violet); animation: scrollDown 2s infinite cubic-bezier(0.65, 0, 0.35, 1); }
         @keyframes scrollDown { 0% { top: -50%; } 100% { top: 100%; } }
 
@@ -208,7 +211,7 @@
         .services { padding: 120px 5%; border-top: 1px solid var(--border); }
         .services-header { max-width: 700px; margin-bottom: 80px; }
         .services-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 24px; }
-        .services-header p { color: var(--text-muted); font-size: 1.1rem; }
+        .services-header p { color: var(--text-muted); font-size: 1.1rem; font-weight: 500; }
 
         .services-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
         .service-card {
@@ -221,12 +224,12 @@
         
         .service-num { font-family: var(--font-heading); color: var(--violet); font-size: 0.9rem; margin-bottom: 24px; font-weight: 700; }
         .service-card h3 { font-size: 1.5rem; margin-bottom: 16px; }
-        .service-card p { color: var(--text-muted); font-size: 0.95rem; }
+        .service-card p { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
 
         /* --- BRAND STATEMENT --- */
-        .brand-statement { padding: 180px 5%; text-align: center; position: relative; overflow: hidden; }
+        .brand-statement { padding: 180px 5%; text-align: center; position: relative; overflow: hidden; border-top: 1px solid var(--border); }
         .brand-statement h2 { font-size: clamp(3rem, 7vw, 6rem); line-height: 1.05; margin-bottom: 40px; text-transform: uppercase; }
-        .brand-statement p { max-width: 600px; margin: 0 auto; color: var(--text-muted); font-size: 1.2rem; }
+        .brand-statement p { max-width: 600px; margin: 0 auto; color: var(--text-muted); font-size: 1.2rem; font-weight: 500; }
 
         /* --- PROCESS SECTION --- */
         .process { padding: 120px 5%; border-top: 1px solid var(--border); }
@@ -242,14 +245,14 @@
             display: flex; justify-content: center; align-items: center; flex-shrink: 0; font-weight: 700;
         }
         .step-content h3 { font-size: 1.3rem; margin-bottom: 8px; }
-        .step-content p { color: var(--text-muted); font-size: 0.95rem; }
+        .step-content p { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
 
         /* --- CONTACT SECTION --- */
         .contact { padding: 120px 5%; background: rgba(255,255,255,0.5); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .contact-grid { display: grid; grid-template-columns: 1fr; gap: 60px; }
         
         .contact-info h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 24px; }
-        .contact-info p { color: var(--text-muted); margin-bottom: 40px; }
+        .contact-info p { color: var(--text-muted); margin-bottom: 40px; font-weight: 500; }
         
         .contact-methods { display: flex; flex-direction: column; gap: 16px; }
         .contact-link {
@@ -283,7 +286,7 @@
         }
         .whatsapp-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(37,211,102,0.05) 0%, transparent 60%); pointer-events: none; }
         .whatsapp-box h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 20px; position: relative; z-index: 1; }
-        .whatsapp-box p { color: var(--text-muted); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; }
+        .whatsapp-box p { color: var(--text-muted); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; font-weight: 500; }
         .btn-wa {
             display: inline-flex; align-items: center; gap: 12px; padding: 18px 36px;
             background: #25D366; color: var(--text-main); text-decoration: none; border-radius: 4px;
@@ -295,11 +298,11 @@
         .footer { padding: 80px 5% 40px; background: rgba(255,255,255,0.8); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
-        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; }
+        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; font-weight: 500; }
         
         .footer-links h4 { font-size: 0.9rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-main); }
         .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition); }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition); font-weight: 500; }
         .footer-links a:hover { color: var(--violet); }
 
         .footer-bottom {
@@ -332,13 +335,12 @@
             .step { flex-direction: column; align-items: center; text-align: center; flex: 1; }
             .step::before { content: ''; position: absolute; top: 30px; left: calc(50% + 30px); width: calc(100% - 60px); height: 1px; background: rgba(0,0,0,0.1); z-index: -1; }
             .step:last-child::before { display: none; }
-            
-            .contact-grid { grid-template-columns: 1fr 1fr; }
+                     .contact-grid { grid-template-columns: 1fr 1fr; }
             .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
             .footer-bottom { flex-direction: row; justify-content: space-between; }
         }
 
-        @media (min-width:1024px) {
+        @media (min-width: 1024px) {
             .services-grid { grid-template-columns: repeat(3, 1fr); }
             .service-card:nth-child(1) { grid-column: span 2; }
             .service-card:nth-child(4) { grid-column: span 1; }
@@ -347,15 +349,11 @@
 </head>
 <body>
 
-    <!-- 13s Live Background Video -->
     <video autoplay loop muted playsinline id="bg-video">
         <source id="bg-video-source" src="" type="video/mp4">
     </video>
-    
-    <!-- Frosted glass overlay to keep text readable -->
     <div class="video-overlay"></div>
 
-    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <a href="index.html" class="logo">NEXORA<span>.</span></a>
         <div class="nav-links">
@@ -376,7 +374,6 @@
         <a href="index.html#contact" class="mobile-link">Contact</a>
     </div>
 
-    <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-content">
             <div class="hero-label"><span>●</span> NEXORA STUDIOS / DIGITAL CREATIVE STUDIO</div>
@@ -419,7 +416,6 @@
         </div>
     </section>
 
-    <!-- Services Section -->
     <section class="services" id="services">
         <div class="services-header reveal">
             <div class="section-label">WHAT WE DO</div>
@@ -461,13 +457,11 @@
         </div>
     </section>
 
-    <!-- Brand Statement -->
     <section class="brand-statement reveal">
         <h2>YOUR IDEAS DESERVE<br>MORE THAN <span class="text-gradient">ORDINARY.</span></h2>
         <p>At NEXORA STUDIOS, creativity meets technology. We transform ideas into digital products, visuals, and experiences designed to help people create, communicate, and grow.</p>
     </section>
 
-    <!-- Process Section -->
     <section class="process">
         <div class="process-header reveal">
             <div class="section-label" style="justify-content: center;">HOW WE WORK</div>
@@ -506,7 +500,6 @@
         </div>
     </section>
 
-    <!-- Contact / Custom Project -->
     <section class="contact" id="contact">
         <div class="contact-grid">
             <div class="contact-info reveal">
@@ -563,7 +556,6 @@
         </div>
     </section>
 
-    <!-- WhatsApp Section -->
     <section class="whatsapp-section">
         <div class="whatsapp-box reveal">
             <h2>STAY CONNECTED TO WHAT'S NEXT.</h2>
@@ -574,7 +566,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
