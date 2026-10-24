@@ -10,7 +10,6 @@ const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
 const productGrid = document.getElementById('product-grid');
 const projectForm = document.getElementById('projectForm');
-const heroVisual = document.getElementById('heroVisual');
 
 // --- AUTO UPDATE YEAR ---
 document.getElementById('year').textContent = new Date().getFullYear();
@@ -28,10 +27,10 @@ window.addEventListener('scroll', () => {
 function toggleMenu(open) {
     if (open) {
         mobileMenu.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // Lock background scroll
     } else {
         mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
+        document.body.style.overflow = ''; // Unlock background scroll
     }
 }
 
@@ -58,22 +57,6 @@ const observer = new IntersectionObserver((entries, observer) => {
 }, observerOptions);
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// --- 3D PARALLAX EFFECT FOR HERO VISUAL (DESKTOP ONLY) ---
-if (window.matchMedia("(min-width: 768px)").matches) {
-    document.addEventListener('mousemove', (e) => {
-        const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-        const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-        
-        const mainCard = document.querySelector('.vc-main');
-        const subCard = document.querySelector('.vc-sub');
-        
-        if(mainCard && subCard) {
-            mainCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
-            subCard.style.transform = `rotateY(${xAxis * 1.5}deg) rotateX(${yAxis * 1.5}deg) translateZ(-50px)`;
-        }
-    });
-}
 
 // --- HELPER: GOOGLE DRIVE IMAGE LINK CONVERTER ---
 function getDriveDirectLink(url) {
