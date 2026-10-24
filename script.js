@@ -1,6 +1,7 @@
-// --- GOOGLE SHEETS CONFIG ---
-const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+// --- GOOGLE SHEETS CONFIG (UPDATED WITH YOUR NEW LINK) ---
+const SHEET_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU'; 
+const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
 // --- DOM ELEMENTS ---
 const navbar = document.getElementById('navbar');
@@ -8,20 +9,19 @@ const menuBtn = document.getElementById('menuBtn');
 const closeMenu = document.getElementById('closeMenu');
 const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
-const productGrid = document.getElementById('product-grid'); // <-- This will be null on index.html
+const productGrid = document.getElementById('product-grid');
 const projectForm = document.getElementById('projectForm');
 
 // --- AUTO UPDATE YEAR ---
-document.getElementById('year').textContent = new Date().getFullYear();
+if(document.getElementById('year')) {
+    document.getElementById('year').textContent = new Date().getFullYear();
+}
 
 // --- NAVBAR SCROLL EFFECT ---
 if (navbar) {
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
     });
 }
 
@@ -41,7 +41,7 @@ if (menuBtn) {
     mobileLinks.forEach(link => link.addEventListener('click', () => toggleMenu(false)));
 }
 
-// --- SCROLL REVEAL ANIMATIONS ---
+// --- SCROLL REVEAL ---
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
 const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -51,8 +51,38 @@ const observer = new IntersectionObserver((entries, observer) => {
         }
     });
 }, observerOptions);
-
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// --- 1. LOAD SITE SETTINGS (BACKGROUND VIDEO) ---
+async function loadSiteSettings() {
+    try {
+        const response = await fetch(SETTINGS_URL);
+        if (!response.ok) return; // If the tab doesn't exist or is blocked, use fallback
+        
+        const csvText = await response.text();
+        
+        Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                const videoTag = document.getElementById('bg-video');
+                const videoSource = document.getElementById('bg-video-source');
+                
+                if (!videoTag || !videoSource) return;
+
+                // Loop through the settings sheet to find the background video
+                results.data.forEach(row => {
+                    if (row.key && row.key.trim() === 'background_video' && row.value) {
+                        videoSource.src = row.value.trim();
+                        videoTag.load(); // Tell the browser to load the new video
+                    }
+                });
+            }
+        });
+    } catch (error) {
+        console.log("Settings not loaded, using default fallback.");
+    }
+}
 
 // --- HELPER: GOOGLE DRIVE IMAGE LINK CONVERTER ---
 function getDriveDirectLink(url) {
@@ -63,16 +93,12 @@ function getDriveDirectLink(url) {
 
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- FETCH & RENDER PRODUCTS (Only runs on products.html) ---
+// --- 2. LOAD PRODUCTS ---
 async function loadProducts() {
-    // If the product grid doesn't exist on this page, stop the function.
-    if (!productGrid) return; 
-
+    if (!productGrid) return; // Stop if we are not on the products page
     try {
-        const response = await fetch(CSV_URL);
-        if (!response.ok) {
-            throw new Error(`Google Sheet Error: Make sure the sheet is shared as "Anyone with the link". Status: ${response.status}`);
-        }
+        const response = await fetch(PRODUCTS_URL);
+        if (!response.ok) throw new Error(`Google Sheet Error. Status: ${response.status}`);
         
         const csvText = await response.text();
 
@@ -84,6 +110,7 @@ async function loadProducts() {
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
+                // Filter out expired products
                 const activeProducts = results.data.filter(product => {
                     if (!product.expiry || product.expiry.trim() === '') return true;
                     const expiryDate = new Date(product.expiry);
@@ -94,15 +121,14 @@ async function loadProducts() {
                 productGrid.innerHTML = ''; 
 
                 if (activeProducts.length === 0) {
-                    productGrid.innerHTML = '<p style="color: var(--gray); text-align: center; width: 100%; grid-column: 1/-1;">New products are coming soon.</p>';
+                    productGrid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">New products are coming soon.</p>';
                     return;
                 }
 
+                // Render Cards
                 activeProducts.forEach((product, index) => {
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
-                    const checkoutLink = selarLink.includes('?') 
-                        ? selarLink + '&add_to_cart=1' 
-                        : selarLink + '?add_to_cart=1';
+                    const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
 
                     let imgUrl = product.image ? product.image.trim() : '';
                     imgUrl = getDriveDirectLink(imgUrl);
@@ -138,9 +164,7 @@ async function loadProducts() {
         });
     } catch (error) {
         console.error('Fetch Error:', error);
-        productGrid.innerHTML = `<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1; padding: 20px;">
-            Error: ${error.message}
-        </p>`;
+        productGrid.innerHTML = `<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1; padding: 20px;">Error: ${error.message}</p>`;
     }
 }
 
@@ -148,7 +172,6 @@ async function loadProducts() {
 if (projectForm) {
     projectForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const service = document.getElementById('service').value;
@@ -161,10 +184,11 @@ if (projectForm) {
         
         setTimeout(() => {
             projectForm.reset();
-            alert("Your email app has been opened to send the project request. If it didn't open, please email us directly at nexorastudio5656@gmail.com");
+            alert("Your email app has been opened. If it didn't open, please email us directly at nexorastudio5656@gmail.com");
         }, 1000);
     });
 }
 
 // --- INITIALIZE ---
-loadProducts();
+loadSiteSettings(); // Fetches the video link
+loadProducts();     // Fetches the products
