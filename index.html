@@ -19,15 +19,18 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- PapaParse for CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
     <style>
-        /* --- REFINED DESIGN SYSTEM --- */
+        /* --- DESIGN SYSTEM --- */
         :root {
             --obsidian: #08090D;
-            --charcoal: #11131B;
+            --charcoal: #12141D;
             --violet: #8B5CF6;
             --cyan: #36D9FF;
             --white: #FFFFFF;
-            --gray: #B4B4BC; /* Improved Contrast */
+            --gray: #A1A1AA;
             --border: rgba(255, 255, 255, 0.08);
             
             --font-heading: 'Space Grotesk', sans-serif;
@@ -56,6 +59,7 @@
 
         /* Typography */
         h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+        
         .section-label {
             font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
             color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
@@ -74,8 +78,8 @@
             pointer-events: none;
         }
         .glow-orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.25; }
-        .orb-1 { width: 50vw; height: 50vw; background: var(--violet); top: -20vh; left: -10vw; }
-        .orb-2 { width: 40vw; height: 40vw; background: var(--cyan); bottom: 10vh; right: -10vw; opacity: 0.15; }
+        .orb-1 { width: 60vw; height: 60vw; background: var(--violet); top: -20vh; left: -15vw; }
+        .orb-2 { width: 50vw; height: 50vw; background: var(--cyan); bottom: 10vh; right: -15vw; opacity: 0.15; }
 
         /* --- NAVIGATION --- */
         .navbar {
@@ -84,7 +88,7 @@
             z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
         }
         .navbar.scrolled {
-            background: rgba(8, 9, 13, 0.85); backdrop-filter: blur(24px);
+            background: rgba(8, 9, 13, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border); padding: 16px 5%;
         }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--white); text-decoration: none; }
@@ -105,7 +109,8 @@
         /* Mobile Menu */
         .mobile-menu {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.98);
-            backdrop-filter: blur(10px); z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
             opacity: 0; pointer-events: none; transition: var(--transition);
         }
         .mobile-menu.active { opacity: 1; pointer-events: all; }
@@ -153,26 +158,36 @@
         }
         .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: var(--gray); }
 
-        /* Premium Hero Visual (Desktop) */
+        /* Hero Visual (Abstract Tech) */
         .hero-visual {
             display: none;
             position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
-            width: 500px; height: 500px; z-index: 1;
-            perspective: 1000px;
+            width: 450px; height: 450px; z-index: 1;
         }
         
         .visual-card {
             position: absolute; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
             background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-            backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            transform-style: preserve-3d; transition: transform 0.1s ease;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 30px 60px rgba(0,0,0,0.6);
         }
 
         .vc-main {
-            width: 320px; height: 400px; top: 50px; right: 50px;
+            width: 300px; height: 380px; top: 35px; right: 35px;
             display: flex; flex-direction: column; padding: 30px;
             border-top: 2px solid var(--cyan); border-right: 2px solid var(--violet);
+            animation: float 6s ease-in-out infinite;
         }
+        .vc-sub {
+            width: 180px; height: 220px; bottom: 35px; left: 0;
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+            animation: float 6s ease-in-out infinite 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
         .vc-header { display: flex; justify-content: space-between; margin-bottom: 40px; }
         .vc-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
         .vc-dot.active { background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
@@ -186,17 +201,10 @@
             display: flex; align-items: flex-end; gap: 10px; padding: 0 10px;
         }
         .vc-bar { width: 30px; background: linear-gradient(to top, var(--violet), var(--cyan)); border-radius: 4px 4px 0 0; opacity: 0.8; }
-        
-        .vc-sub {
-            width: 200px; height: 250px; bottom: 50px; left: 0;
-            transform: rotateY(20deg) translateZ(-50px);
-            padding: 20px; display: flex; flex-direction: column; gap: 15px;
-        }
-        .vc-sub-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(139, 92, 246, 0.2); border: 1px solid var(--violet); }
 
         /* Scroll Indicator */
         .scroll-indicator {
-            position: absolute; bottom: 40px; left: 5%; display: flex; align-items: center; gap: 12px;
+            position: absolute; bottom: 40px; left: 5%; display: none; align-items: center; gap: 12px;
             color: var(--gray); font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
         }
         .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
@@ -323,7 +331,6 @@
             border: 1px solid rgba(37, 211, 102, 0.2); border-radius: 20px; padding: 80px 20px;
             max-width: 900px; margin: 0 auto; position: relative; overflow: hidden;
         }
-        /* THIS IS THE LINE YOU WERE FIXING */
         .whatsapp-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(37,211,102,0.1) 0%, transparent 60%); pointer-events: none; }
         .whatsapp-box h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 20px; position: relative; z-index: 1; }
         .whatsapp-box p { color: var(--gray); margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; position: relative; z-index: 1; }
@@ -364,6 +371,7 @@
             .hero-content { max-width: 55%; }
             .hero-actions { flex-direction: row; }
             .hero-visual { display: block; }
+            .scroll-indicator { display: flex; }
             
             .services-grid { grid-template-columns: repeat(2, 1fr); }
             .service-card:nth-child(1) { grid-column: span 2; }
@@ -439,13 +447,12 @@
         </div>
         
         <!-- Premium Hero Visual (Desktop) -->
-        <div class="hero-visual" id="heroVisual">
+        <div class="hero-visual">
             <div class="visual-card vc-sub">
-                <div class="vc-sub-circle"></div>
+                <div class="vc-sub-circle" style="width:40px; height:40px; border-radius:50%; background:rgba(139,92,246,0.2); border:1px solid var(--violet);"></div>
                 <div class="vc-line w-75"></div>
                 <div class="vc-line w-50"></div>
                 <div class="vc-line w-100"></div>
-                <div class="vc-line w-75"></div>
             </div>
             <div class="visual-card vc-main">
                 <div class="vc-header">
@@ -694,6 +701,8 @@
         </div>
     </footer>
 
+    <!-- PapaParse CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
