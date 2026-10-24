@@ -46,7 +46,7 @@
             height: 100vh;
             object-fit: cover;
             z-index: -2; 
-            opacity: 0.9; 
+            opacity: 1; 
             background-color: var(--bg-fallback); 
         }
         
@@ -55,9 +55,9 @@
             top: 0; left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(2px); 
+            -webkit-backdrop-filter: blur(2px);
             z-index: -1;
             pointer-events: none;
         }
@@ -75,20 +75,28 @@
         }
         .section-label::before { content: ''; width: 24px; height: 1px; background: var(--violet); }
 
-        /* --- NAVIGATION --- */
+        /* --- UPDATED: BLENDED NAVIGATION --- */
         .navbar {
             position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%;
             display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            z-index: 1000; transition: var(--transition); 
+            background: transparent; /* Transparent at the top */
+            border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.5); /* Frosted glass on scroll */
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border); 
+            padding: 16px 5%;
             box-shadow: 0 4px 30px rgba(0,0,0,0.03);
         }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
         .logo span { color: var(--violet); }
         
         .nav-links { display: none; gap: 40px; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover, .nav-links a.active { color: var(--violet); }
         
         .nav-cta {
             display: none; padding: 12px 28px; border-radius: 4px; background: var(--text-main); color: #fff;
@@ -118,7 +126,7 @@
         .product-card {
             background: var(--bg-card); border: 1px solid rgba(0,0,0,0.06); border-radius: 12px;
             overflow: hidden; transition: var(--transition); display: flex; flex-direction: column;
-            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.02);
         }
         .product-card:hover { border-color: var(--violet); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(124, 58, 237, 0.08); }
         
@@ -175,15 +183,11 @@
 </head>
 <body>
 
-    <!-- 13s Live Background Video -->
     <video autoplay loop muted playsinline id="bg-video">
         <source id="bg-video-source" src="" type="video/mp4">
     </video>
-    
-    <!-- Frosted glass overlay to keep text readable -->
     <div class="video-overlay"></div>
 
-    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <a href="index.html" class="logo">NEXORA<span>.</span></a>
         <div class="nav-links">
@@ -204,7 +208,6 @@
         <a href="index.html#contact" class="mobile-link">Contact</a>
     </div>
 
-    <!-- Main Store Section -->
     <section class="marketplace" id="products">
         <div class="marketplace-header reveal">
             <div>
@@ -233,7 +236,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
