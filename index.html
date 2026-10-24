@@ -12,15 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- PapaParse -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
     <style>
         :root {
-            /* Light Mode Palette */
             --bg-fallback: #F3F4F6;
-            --bg-card: rgba(255, 255, 255, 0.75); /* Semi-transparent white for glass effect */
+            --bg-card: rgba(255, 255, 255, 0.85); 
             --text-main: #11131B;
             --text-muted: #4B5563;
             --violet: #7C3AED;
-            --cyan: #0284C7; /* Darker cyan for light mode contrast */
+            --cyan: #0284C7; 
             --border: rgba(0, 0, 0, 0.08);
             
             --font-heading: 'Space Grotesk', sans-serif; 
@@ -32,19 +34,36 @@
         html { scroll-behavior: smooth; }
 
         body {
-            /* Sets your image as the background */
             background-color: var(--bg-fallback);
-            background-image: url('bg-light.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-            
             color: var(--text-main);
             font-family: var(--font-body);
             line-height: 1.6;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LIVE VIDEO BACKGROUND --- */
+        #bg-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -2; 
+            opacity: 0.9; 
+            background-color: var(--bg-fallback); /* Shows while video loads */
+        }
+        
+        .video-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.85); /* Frosted glass effect */
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            z-index: -1;
+            pointer-events: none;
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -73,7 +92,7 @@
             z-index: 1000; transition: var(--transition); border-bottom: 1px solid transparent;
         }
         .navbar.scrolled {
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             border-bottom: 1px solid var(--border); padding: 16px 5%;
             box-shadow: 0 4px 30px rgba(0,0,0,0.03);
         }
@@ -136,7 +155,7 @@
         }
         .btn-secondary:hover { background: rgba(0,0,0,0.05); border-color: var(--text-main); }
 
-        /* Hero Visual (Abstract Tech - Light Mode) */
+        /* Hero Visual */
         .hero-visual {
             display: none;
             position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
@@ -196,7 +215,7 @@
             background: var(--bg-card); border: 1px solid rgba(0,0,0,0.06); border-radius: 12px;
             padding: 40px; transition: var(--transition); position: relative; overflow: hidden;
             display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .service-card:hover { border-color: rgba(124, 58, 237, 0.3); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(124, 58, 237, 0.08); }
         
@@ -226,7 +245,7 @@
         .step-content p { color: var(--text-muted); font-size: 0.95rem; }
 
         /* --- CONTACT SECTION --- */
-        .contact { padding: 120px 5%; background: rgba(255,255,255,0.4); border-top: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .contact { padding: 120px 5%; background: rgba(255,255,255,0.5); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .contact-grid { display: grid; grid-template-columns: 1fr; gap: 60px; }
         
         .contact-info h2 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 24px; }
@@ -257,10 +276,10 @@
         /* --- WHATSAPP SECTION --- */
         .whatsapp-section { padding: 100px 5%; text-align: center; border-top: 1px solid var(--border); }
         .whatsapp-box {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(37, 211, 102, 0.3); border-radius: 20px; padding: 80px 20px;
             max-width: 900px; margin: 0 auto; position: relative; overflow: hidden;
-            backdrop-filter: blur(10px); box-shadow: 0 15px 40px rgba(37, 211, 102, 0.05);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 15px 40px rgba(37, 211, 102, 0.05);
         }
         .whatsapp-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(37,211,102,0.05) 0%, transparent 60%); pointer-events: none; }
         .whatsapp-box h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 20px; position: relative; z-index: 1; }
@@ -273,7 +292,7 @@
         .btn-wa:hover { background: #1EBE5A; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37, 211, 102, 0.2); }
 
         /* --- FOOTER --- */
-        .footer { padding: 80px 5% 40px; background: rgba(255,255,255,0.7); border-top: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .footer { padding: 80px 5% 40px; background: rgba(255,255,255,0.8); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
         .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; }
@@ -319,7 +338,7 @@
             .footer-bottom { flex-direction: row; justify-content: space-between; }
         }
 
-        @media (min-width: 1024px) {
+        @media (min-width:1024px) {
             .services-grid { grid-template-columns: repeat(3, 1fr); }
             .service-card:nth-child(1) { grid-column: span 2; }
             .service-card:nth-child(4) { grid-column: span 1; }
@@ -327,6 +346,14 @@
     </style>
 </head>
 <body>
+
+    <!-- 13s Live Background Video -->
+    <video autoplay loop muted playsinline id="bg-video">
+        <source id="bg-video-source" src="" type="video/mp4">
+    </video>
+    
+    <!-- Frosted glass overlay to keep text readable -->
+    <div class="video-overlay"></div>
 
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
@@ -586,7 +613,6 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
