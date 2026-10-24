@@ -105,10 +105,12 @@
 
         .mobile-menu-btn { display: block; color: var(--text-main); font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 10px; }
 
+        /* --- FIXED: MOBILE MENU Z-INDEX --- */
         .mobile-menu {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.98);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
+            z-index: 1001; /* NOW SITS ABOVE THE NAVBAR */
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
             opacity: 0; pointer-events: none; transition: var(--transition);
         }
         .mobile-menu.active { opacity: 1; pointer-events: all; }
