@@ -1,7 +1,13 @@
-// --- GOOGLE SHEETS CONFIG (UPDATED WITH YOUR NEW LINK) ---
-const SHEET_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU'; 
-const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
-const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
+// --- GOOGLE SHEETS CONFIG ---
+
+// 1. YOUR PRODUCTS SHEET
+const PRODUCTS_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
+const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
+
+// 2. YOUR SITE SETTINGS SHEET
+// IMPORTANT: Make sure the tab inside this sheet is named exactly "SiteSettings"
+const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
+const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
 // --- DOM ELEMENTS ---
 const navbar = document.getElementById('navbar');
@@ -57,7 +63,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 async function loadSiteSettings() {
     try {
         const response = await fetch(SETTINGS_URL);
-        if (!response.ok) return; // If the tab doesn't exist or is blocked, use fallback
+        if (!response.ok) return; 
         
         const csvText = await response.text();
         
@@ -70,17 +76,17 @@ async function loadSiteSettings() {
                 
                 if (!videoTag || !videoSource) return;
 
-                // Loop through the settings sheet to find the background video
+                // Look for the row where key is 'background_video'
                 results.data.forEach(row => {
-                    if (row.key && row.key.trim() === 'background_video' && row.value) {
+                    if (row.key && row.key.trim().toLowerCase() === 'background_video' && row.value) {
                         videoSource.src = row.value.trim();
-                        videoTag.load(); // Tell the browser to load the new video
+                        videoTag.load(); 
                     }
                 });
             }
         });
     } catch (error) {
-        console.log("Settings not loaded, using default fallback.");
+        console.log("Settings not loaded, using default background.");
     }
 }
 
@@ -95,7 +101,7 @@ const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57f
 
 // --- 2. LOAD PRODUCTS ---
 async function loadProducts() {
-    if (!productGrid) return; // Stop if we are not on the products page
+    if (!productGrid) return; 
     try {
         const response = await fetch(PRODUCTS_URL);
         if (!response.ok) throw new Error(`Google Sheet Error. Status: ${response.status}`);
@@ -190,5 +196,5 @@ if (projectForm) {
 }
 
 // --- INITIALIZE ---
-loadSiteSettings(); // Fetches the video link
-loadProducts();     // Fetches the products
+loadSiteSettings(); // Loads the video from Sheet 2
+loadProducts();     // Loads products from Sheet 1
