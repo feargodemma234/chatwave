@@ -93,7 +93,7 @@
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
         .logo span { color: var(--violet); }
         
-        .nav-links { display: none; gap: 40px; }
+        .nav-links { display: none; gap: 30px; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
         
@@ -105,17 +105,64 @@
 
         .mobile-menu-btn { display: block; color: var(--text-main); font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 10px; }
 
-        /* --- FIXED: MOBILE MENU Z-INDEX --- */
+        /* --- REDESIGNED MOBILE MENU --- */
         .mobile-menu {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.98);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            z-index: 1001; /* NOW SITS ABOVE THE NAVBAR */
-            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 40px;
-            opacity: 0; pointer-events: none; transition: var(--transition);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 1001; 
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+            padding: 0 10%;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
+        
         .mobile-menu.active { opacity: 1; pointer-events: all; }
-        .mobile-menu a { color: var(--text-main); font-family: var(--font-heading); font-size: 2.5rem; text-decoration: none; font-weight: 700; }
-        .close-menu { position: absolute; top: 24px; right: 5%; font-size: 2rem; color: var(--text-main); cursor: pointer; background: none; border: none; padding: 10px; }
+
+        .close-menu { 
+            position: absolute; top: 30px; right: 10%; 
+            font-size: 2rem; color: var(--text-main); cursor: pointer; 
+            background: rgba(255,255,255,0.1); border: 1px solid var(--border); 
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            transition: var(--transition);
+        }
+        .close-menu:hover { background: var(--violet); transform: rotate(90deg); }
+
+        .mobile-menu-links { display: flex; flex-direction: column; gap: 20px; margin-bottom: 50px; }
+
+        .mobile-link { 
+            font-family: var(--font-heading); font-size: clamp(2.5rem, 8vw, 4rem); 
+            text-decoration: none; font-weight: 700; color: var(--text-main); 
+            display: flex; align-items: baseline; gap: 15px;
+            opacity: 0; transform: translateY(30px); 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-link .num {
+            font-family: var(--font-body); font-size: 0.9rem; color: var(--cyan); 
+            font-weight: 600; letter-spacing: 2px;
+        }
+
+        .mobile-link:hover { 
+            background: linear-gradient(135deg, var(--violet), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transform: translateX(10px);
+        }
+
+        .mobile-menu.active .mobile-link:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+        .mobile-menu.active .mobile-link:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+        .mobile-menu.active .mobile-link:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        .mobile-menu.active .mobile-link:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+        .mobile-menu.active .mobile-link:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+
+        .mobile-cta {
+            display: inline-flex; padding: 16px 32px; background: var(--text-main); color: #08090D;
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 4px;
+            opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mobile-menu.active .mobile-cta { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
 
         /* --- MARKETPLACE SECTION --- */
         .marketplace { padding: 160px 5% 120px; min-height: 100vh; }
@@ -124,7 +171,6 @@
         
         .product-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
         
-        /* Dark Glass Product Cards */
         .product-card {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
             overflow: hidden; transition: var(--transition); display: flex; flex-direction: column;
@@ -160,7 +206,7 @@
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
         /* --- FOOTER --- */
-        .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.8); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.9); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
         .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; font-weight: 500; }
@@ -186,37 +232,39 @@
 </head>
 <body>
 
-    <!-- Live Video Background -->
     <video autoplay loop muted playsinline id="bg-video">
         <source id="bg-video-source" src="" type="video/mp4">
     </video>
-    
-    <!-- Dark glass overlay -->
     <div class="video-overlay"></div>
 
-    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <a href="index.html" class="logo">NEXORA<span>.</span></a>
         <div class="nav-links">
             <a href="index.html">Home</a>
+            <a href="index.html#about">About</a>
             <a href="index.html#services">Services</a>
             <a href="products.html" class="active">Products</a>
             <a href="index.html#contact">Contact</a>
         </div>
-        <a href="index.html#contact" class="nav-cta">LET'S CREATE ↗</a>
+        <a href="index.html#contact" class="nav-cta">START A PROJECT ↗</a>
         <button class="mobile-menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
     </nav>
 
-    <!-- Mobile Menu -->
+    <!-- REDESIGNED MOBILE MENU -->
     <div class="mobile-menu" id="mobileMenu">
         <button class="close-menu" id="closeMenu"><i class="fa-solid fa-xmark"></i></button>
-        <a href="index.html" class="mobile-link">Home</a>
-        <a href="index.html#services" class="mobile-link">Services</a>
-        <a href="products.html" class="mobile-link">Products</a>
-        <a href="index.html#contact" class="mobile-link">Contact</a>
+        
+        <div class="mobile-menu-links">
+            <a href="index.html" class="mobile-link"><span class="num">01</span> Home</a>
+            <a href="index.html#about" class="mobile-link"><span class="num">02</span> About</a>
+            <a href="index.html#services" class="mobile-link"><span class="num">03</span> Services</a>
+            <a href="products.html" class="mobile-link"><span class="num">04</span> Products</a>
+            <a href="index.html#contact" class="mobile-link"><span class="num">05</span> Contact</a>
+        </div>
+
+        <a href="index.html#contact" class="mobile-cta">LET'S CREATE ↗</a>
     </div>
 
-    <!-- Main Store Section -->
     <section class="marketplace" id="products">
         <div class="marketplace-header reveal">
             <div>
@@ -245,7 +293,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
@@ -256,6 +303,7 @@
                 <h4>Navigation</h4>
                 <ul>
                     <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#about">About</a></li>
                     <li><a href="index.html#services">Services</a></li>
                     <li><a href="products.html">Products</a></li>
                     <li><a href="index.html#contact">Contact</a></li>
@@ -267,6 +315,7 @@
                     <li><a href="index.html#services">Digital Products</a></li>
                     <li><a href="index.html#services">Brand Design</a></li>
                     <li><a href="index.html#services">Web Development</a></li>
+                    <li><a href="index.html#services">AI Visuals</a></li>
                 </ul>
             </div>
             <div class="footer-links">
