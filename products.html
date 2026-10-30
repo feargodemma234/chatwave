@@ -93,7 +93,7 @@
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
         .logo span { color: var(--violet); }
         
-        .nav-links { display: none; gap: 30px; }
+        .nav-links { display: none; gap: 25px; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
         
@@ -129,10 +129,10 @@
         }
         .close-menu:hover { background: var(--violet); transform: rotate(90deg); }
 
-        .mobile-menu-links { display: flex; flex-direction: column; gap: 20px; margin-bottom: 50px; }
+        .mobile-menu-links { display: flex; flex-direction: column; gap: 15px; margin-bottom: 50px; }
 
         .mobile-link { 
-            font-family: var(--font-heading); font-size: clamp(2.5rem, 8vw, 4rem); 
+            font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 3rem); 
             text-decoration: none; font-weight: 700; color: var(--text-main); 
             display: flex; align-items: baseline; gap: 15px;
             opacity: 0; transform: translateY(30px); 
@@ -156,13 +156,14 @@
         .mobile-menu.active .mobile-link:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
         .mobile-menu.active .mobile-link:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
         .mobile-menu.active .mobile-link:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+        .mobile-menu.active .mobile-link:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
 
         .mobile-cta {
             display: inline-flex; padding: 16px 32px; background: var(--text-main); color: #08090D;
             text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 4px;
             opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .mobile-menu.active .mobile-cta { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
+        .mobile-menu.active .mobile-cta { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
 
         /* --- MARKETPLACE SECTION --- */
         .marketplace { padding: 160px 5% 120px; min-height: 100vh; }
@@ -232,15 +233,12 @@
 </head>
 <body>
 
-    <!-- Live Video Background -->
     <video autoplay loop muted playsinline id="bg-video">
         <source id="bg-video-source" src="" type="video/mp4">
     </video>
     
-    <!-- Dark glass overlay -->
     <div class="video-overlay"></div>
 
-    <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <a href="index.html" class="logo">NEXORA<span>.</span></a>
         <div class="nav-links">
@@ -248,13 +246,13 @@
             <a href="index.html#about">About</a>
             <a href="index.html#services">Services</a>
             <a href="products.html" class="active">Products</a>
+            <a href="accounts.html">Accounts</a>
             <a href="contact.html">Contact</a>
         </div>
         <a href="contact.html" class="nav-cta">START A PROJECT ↗</a>
         <button class="mobile-menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
     </nav>
 
-    <!-- REDESIGNED MOBILE MENU -->
     <div class="mobile-menu" id="mobileMenu">
         <button class="close-menu" id="closeMenu"><i class="fa-solid fa-xmark"></i></button>
         
@@ -263,13 +261,13 @@
             <a href="index.html#about" class="mobile-link"><span class="num">02</span> About</a>
             <a href="index.html#services" class="mobile-link"><span class="num">03</span> Services</a>
             <a href="products.html" class="mobile-link"><span class="num">04</span> Products</a>
-            <a href="contact.html" class="mobile-link"><span class="num">05</span> Contact</a>
+            <a href="accounts.html" class="mobile-link"><span class="num">05</span> Accounts</a>
+            <a href="contact.html" class="mobile-link"><span class="num">06</span> Contact</a>
         </div>
 
         <a href="contact.html" class="mobile-cta">LET'S CREATE ↗</a>
     </div>
 
-    <!-- Main Store Section -->
     <section class="marketplace" id="products">
         <div class="marketplace-header reveal">
             <div>
@@ -298,7 +296,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
@@ -312,6 +309,7 @@
                     <li><a href="index.html#about">About</a></li>
                     <li><a href="index.html#services">Services</a></li>
                     <li><a href="products.html">Products</a></li>
+                    <li><a href="accounts.html">Accounts</a></li>
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
             </div>
