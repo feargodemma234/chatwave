@@ -1,11 +1,13 @@
 // --- GOOGLE SHEETS CONFIG ---
-
-// 1. YOUR PRODUCTS SHEET
+// 1. PRODUCTS SHEET (Digital Assets)
 const PRODUCTS_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
 const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
 
-// 2. YOUR SITE SETTINGS SHEET
-// IMPORTANT: Make sure the tab inside this sheet is named exactly "SiteSettings"
+// 2. ACCOUNTS SHEET (Social Media Marketplace) - UPDATED
+const ACCOUNTS_ID = '19zcWjHnwCU0snl3mSWgMDevzkX7MJk48CFCNdKZgvsI'; 
+const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
+
+// 3. SETTINGS SHEET (Video Background)
 const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
 const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
@@ -15,7 +17,6 @@ const menuBtn = document.getElementById('menuBtn');
 const closeMenu = document.getElementById('closeMenu');
 const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
-const productGrid = document.getElementById('product-grid');
 const projectForm = document.getElementById('projectForm');
 
 // --- AUTO UPDATE YEAR ---
@@ -64,19 +65,16 @@ async function loadSiteSettings() {
     try {
         const response = await fetch(SETTINGS_URL);
         if (!response.ok) return; 
-        
         const csvText = await response.text();
         
         Papa.parse(csvText, {
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                const videoTag = document.getElementById('bg-video');
                 const videoSource = document.getElementById('bg-video-source');
-                
-                if (!videoTag || !videoSource) return;
+                const videoTag = document.getElementById('bg-video');
+                if (!videoSource || !videoTag) return;
 
-                // Look for the row where key is 'background_video'
                 results.data.forEach(row => {
                     if (row.key && row.key.trim().toLowerCase() === 'background_video' && row.value) {
                         videoSource.src = row.value.trim();
@@ -86,67 +84,58 @@ async function loadSiteSettings() {
             }
         });
     } catch (error) {
-        console.log("Settings not loaded, using default background.");
+        console.log("Settings not loaded.");
     }
 }
 
-// --- HELPER: GOOGLE DRIVE IMAGE LINK CONVERTER ---
+// --- HELPER: GOOGLE DRIVE IMAGE CONVERTER ---
 function getDriveDirectLink(url) {
     if (!url || !url.includes('drive.google.com')) return url;
     const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]+)/);
     return match && match[1] ? `https://drive.google.com/uc?export=view&id=${match[1]}` : url;
 }
-
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- 2. LOAD PRODUCTS ---
+// --- 2. LOAD PRODUCTS (Runs on products.html) ---
 async function loadProducts() {
-    if (!productGrid) return; 
+    const grid = document.getElementById('product-grid');
+    if (!grid) return; 
+    
+    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">Loading products...</p>';
+
     try {
         const response = await fetch(PRODUCTS_URL);
-        if (!response.ok) throw new Error(`Google Sheet Error. Status: ${response.status}`);
-        
+        if (!response.ok) throw new Error(`Make sure your Products sheet is public.`);
         const csvText = await response.text();
 
         Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
-            transformHeader: header => header.trim().toLowerCase(),
+            header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase(),
             complete: function(results) {
-                const today = new Date();
-                today.setHours(0,0,0,0);
-
-                // Filter out expired products
-                const activeProducts = results.data.filter(product => {
-                    if (!product.expiry || product.expiry.trim() === '') return true;
-                    const expiryDate = new Date(product.expiry);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const activeProducts = results.data.filter(p => {
+                    if (!p.expiry || p.expiry.trim() === '') return true;
+                    const expiryDate = new Date(p.expiry);
                     if (isNaN(expiryDate.getTime())) return true;
                     return today <= expiryDate;
                 });
 
-                productGrid.innerHTML = ''; 
+                grid.innerHTML = ''; 
 
                 if (activeProducts.length === 0) {
-                    productGrid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">New products are coming soon.</p>';
+                    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">No active products found.</p>';
                     return;
                 }
 
-                // Render Cards
                 activeProducts.forEach((product, index) => {
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
                     const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
-
-                    let imgUrl = product.image ? product.image.trim() : '';
-                    imgUrl = getDriveDirectLink(imgUrl);
-                    if (!imgUrl) imgUrl = FALLBACK_IMG;
-
                     const rawPrice = product['price usd'];
                     const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+                    let imgUrl = getDriveDirectLink(product.image ? product.image.trim() : '') || FALLBACK_IMG;
 
                     const card = document.createElement('div');
                     card.className = 'product-card reveal';
                     card.style.transitionDelay = `${index * 0.1}s`; 
-
                     card.innerHTML = `
                         <div class="product-image-wrapper">
                             <img src="${imgUrl}" alt="${product.name}" class="product-image" onerror="this.src='${FALLBACK_IMG}'">
@@ -158,19 +147,82 @@ async function loadProducts() {
                                 <span class="product-price">${formattedPrice}</span>
                                 <span class="product-category">Digital</span>
                             </div>
-                            <a href="${checkoutLink}" target="_blank" class="btn-buy">
-                                GET ACCESS <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
+                            <a href="${checkoutLink}" target="_blank" class="btn-buy">GET ACCESS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
                         </div>
                     `;
-                    productGrid.appendChild(card);
+                    grid.appendChild(card);
                     observer.observe(card);
                 });
             }
         });
     } catch (error) {
-        console.error('Fetch Error:', error);
-        productGrid.innerHTML = `<p style="color: red; text-align: center; width: 100%; grid-column: 1/-1; padding: 20px;">Error: ${error.message}</p>`;
+        grid.innerHTML = `<div style="grid-column: 1/-1; padding: 30px; background: rgba(255,0,0,0.1); border: 1px solid red; border-radius: 10px; text-align: center; color: red;"><h3>Failed to load products</h3><p>${error.message}</p></div>`;
+    }
+}
+
+// --- 3. LOAD ACCOUNTS (Runs on accounts.html) ---
+async function loadAccounts() {
+    const grid = document.getElementById('account-grid');
+    if (!grid) return; 
+
+    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">Loading accounts...</p>';
+
+    try {
+        const response = await fetch(ACCOUNTS_URL);
+        if (!response.ok) throw new Error(`Make sure your Accounts sheet is public.`);
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+            header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase(),
+            complete: function(results) {
+                grid.innerHTML = ''; 
+
+                if (results.data.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">No accounts available right now.</p>';
+                    return;
+                }
+
+                results.data.forEach((account, index) => {
+                    let selarLink = account['selar_link'] ? account['selar_link'].trim() : '#';
+                    const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
+                    const rawPrice = account['price_usd'];
+                    const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+                    let imgUrl = getDriveDirectLink(account.image ? account.image.trim() : '') || FALLBACK_IMG;
+
+                    let icon = '<i class="fa-solid fa-globe"></i>';
+                    const platform = (account.platform || '').toLowerCase();
+                    if (platform.includes('insta')) icon = '<i class="fa-brands fa-instagram"></i>';
+                    if (platform.includes('tiktok')) icon = '<i class="fa-brands fa-tiktok"></i>';
+                    if (platform.includes('twitter') || platform.includes('x')) icon = '<i class="fa-brands fa-x-twitter"></i>';
+                    if (platform.includes('youtube')) icon = '<i class="fa-brands fa-youtube"></i>';
+
+                    const card = document.createElement('div');
+                    card.className = 'product-card reveal';
+                    card.style.transitionDelay = `${index * 0.1}s`; 
+                    card.innerHTML = `
+                        <div class="product-image-wrapper">
+                            <img src="${imgUrl}" alt="${account.handle}" class="product-image" onerror="this.src='${FALLBACK_IMG}'">
+                            <div style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 50%; color: var(--cyan); font-size: 1.2rem; backdrop-filter: blur(5px);">
+                                ${icon}
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>${account.handle || 'Unknown Handle'}</h3>
+                            <p><strong>Niche:</strong> ${account.niche || 'N/A'}<br><strong>Followers:</strong> ${account.followers || 'N/A'}</p>
+                            <div class="product-meta">
+                                <span class="product-price">${formattedPrice}</span>
+                                <span class="product-category">${account.platform || 'Account'}</span>
+                            </div>
+                            <a href="${checkoutLink}" target="_blank" class="btn-buy">BUY ACCOUNT <i class="fa-solid fa-cart-shopping"></i></a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    observer.observe(card);
+                });
+            }
+        });
+    } catch (error) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; padding: 30px; background: rgba(255,0,0,0.1); border: 1px solid red; border-radius: 10px; text-align: center; color: red;"><h3>Failed to load accounts</h3><p>${error.message}</p></div>`;
     }
 }
 
@@ -185,7 +237,6 @@ if (projectForm) {
 
         const subject = encodeURIComponent(`New Project Request: ${service} from ${name}`);
         const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nService: ${service}\n\nProject Details:\n${message}`);
-        
         window.location.href = `mailto:nexorastudio5656@gmail.com?subject=${subject}&body=${body}`;
         
         setTimeout(() => {
@@ -196,5 +247,6 @@ if (projectForm) {
 }
 
 // --- INITIALIZE ---
-loadSiteSettings(); // Loads the video from Sheet 2
-loadProducts();     // Loads products from Sheet 1
+loadSiteSettings();
+loadProducts();
+loadAccounts();
