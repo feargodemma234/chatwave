@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Social Accounts Market | NEXORA STUDIOS</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        /* Paste the EXACT same CSS from products.html here */
+        :root {
+            --bg-fallback: #08090D; --bg-card: rgba(18, 20, 27, 0.6);
+            --text-main: #FFFFFF; --text-muted: #A1A1AA;
+            --violet: #8B5CF6; --cyan: #36D9FF; --border: rgba(255, 255, 255, 0.1);
+            --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-fallback); color: var(--text-main); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        #bg-video { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; opacity: 1; background-color: var(--bg-fallback); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.65); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: -1; pointer-events: none; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+        h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--text-main); }
+        .section-label { font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .section-label::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
+        
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: var(--transition); background: transparent; border-bottom: 1px solid transparent; }
+        .navbar.scrolled { background: rgba(8, 9, 13, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 16px 5%; }
+        .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
+        .logo span { color: var(--violet); }
+        .nav-links { display: none; gap: 30px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
+        .nav-cta { display: none; padding: 12px 28px; border-radius: 4px; background: #FFFFFF; color: #08090D; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: var(--transition); }
+        .nav-cta:hover { background: var(--violet); color: #FFF; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+        .mobile-menu-btn { display: block; color: var(--text-main); font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 10px; }
+
+        .mobile-menu { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 1001; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 0 10%; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .mobile-menu.active { opacity: 1; pointer-events: all; }
+        .close-menu { position: absolute; top: 30px; right: 10%; font-size: 2rem; color: var(--text-main); cursor: pointer; background: rgba(255,255,255,0.1); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: var(--transition); }
+        .close-menu:hover { background: var(--violet); transform: rotate(90deg); }
+        .mobile-menu-links { display: flex; flex-direction: column; gap: 20px; margin-bottom: 50px; }
+        .mobile-link { font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 3rem); text-decoration: none; font-weight: 700; color: var(--text-main); display: flex; align-items: baseline; gap: 15px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-link .num { font-family: var(--font-body); font-size: 0.9rem; color: var(--cyan); font-weight: 600; letter-spacing: 2px; }
+        .mobile-link:hover { background: linear-gradient(135deg, var(--violet), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: translateX(10px); }
+        .mobile-menu.active .mobile-link:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+        .mobile-menu.active .mobile-link:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.2s; }
+        .mobile-menu.active .mobile-link:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.3s; }
+        .mobile-menu.active .mobile-link:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+        .mobile-menu.active .mobile-link:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
+        .mobile-menu.active .mobile-link:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
+        .mobile-cta { display: inline-flex; padding: 16px 32px; background: var(--text-main); color: #08090D; text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 4px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-menu.active .mobile-cta { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
+
+        .marketplace { padding: 160px 5% 120px; min-height: 100vh; }
+        .marketplace-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; flex-wrap: wrap; gap: 24px; }
+        .marketplace-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+        
+        .product-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        
+        .product-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .product-card:hover { border-color: rgba(139, 92, 246, 0.4); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); }
+        .product-image-wrapper { width: 100%; height: 240px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+        .product-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .product-card:hover .product-image { transform: scale(1.05); }
+        .product-info { padding: 32px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-info h3 { font-size: 1.4rem; margin-bottom: 12px; }
+        .product-info p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; flex-grow: 1; font-weight: 500; line-height: 1.8; }
+        .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+        .product-price { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+        .product-category { font-size: 0.75rem; color: var(--violet); border: 1px solid rgba(139, 92, 246, 0.3); padding: 4px 12px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .btn-buy { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: var(--transition); }
+        .btn-buy:hover { background: #FFFFFF; color: #08090D; border-color: #FFFFFF; }
+
+        .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.9); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
+        .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
+        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; font-weight: 500; }
+        .footer-links h4 { font-size: 0.9rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-main); }
+        .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition); font-weight: 500; }
+        .footer-links a:hover { color: var(--cyan); }
+        .footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 32px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; }
+
+        @media (min-width: 768px) {
+            .nav-links { display: flex; } .nav-cta { display: inline-block; } .mobile-menu-btn { display: none; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
+            .footer-bottom { flex-direction: row; justify-content: space-between; }
+        }
+        @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <video autoplay loop muted playsinline id="bg-video"><source id="bg-video-source" src="" type="video/mp4"></video>
+    <div class="video-overlay"></div>
+
+    <nav class="navbar" id="navbar">
+        <a href="index.html" class="logo">NEXORA<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#services">Services</a>
+            <a href="products.html">Products</a>
+            <a href="accounts.html" class="active">Accounts</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <a href="contact.html" class="nav-cta">START A PROJECT ↗</a>
+        <button class="mobile-menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu" id="closeMenu"><i class="fa-solid fa-xmark"></i></button>
+        <div class="mobile-menu-links">
+            <a href="index.html" class="mobile-link"><span class="num">01</span> Home</a>
+            <a href="index.html#about" class="mobile-link"><span class="num">02</span> About</a>
+            <a href="index.html#services" class="mobile-link"><span class="num">03</span> Services</a>
+            <a href="products.html" class="mobile-link"><span class="num">04</span> Products</a>
+            <a href="accounts.html" class="mobile-link"><span class="num">05</span> Accounts</a>
+            <a href="contact.html" class="mobile-link"><span class="num">06</span> Contact</a>
+        </div>
+        <a href="contact.html" class="mobile-cta">LET'S CREATE ↗</a>
+    </div>
+
+    <section class="marketplace" id="accounts">
+        <div class="marketplace-header reveal">
+            <div>
+                <div class="section-label">SOCIAL MEDIA MARKET</div>
+                <h2>BUY ESTABLISHED<br>SOCIAL ACCOUNTS.</h2>
+                <p style="color: var(--text-muted); margin-top: 15px; max-width: 500px;">Skip the grind. Buy established, high-engagement social media accounts with real followers ready for monetization.</p>
+            </div>
+        </div>
+
+        <!-- The ID here is 'account-grid' so script.js knows to load accounts -->
+        <div class="product-grid" id="account-grid">
+            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h3>NEXORA<span style="color: var(--violet);">.</span></h3>
+                <p>Ideas. Designed Digitally.<br><br>Premium digital assets and creative solutions for the modern world.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#services">Services</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="accounts.html">Accounts</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="index.html#services">Digital Products</a></li>
+                    <li><a href="index.html#services">Brand Design</a></li>
+                    <li><a href="index.html#services">Web Development</a></li>
+                    <li><a href="index.html#services">AI Visuals</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="mailto:nexorastudio5656@gmail.com">Email Us</a></li>
+                    <li><a href="https://wa.me/2349022077839" target="_blank">WhatsApp</a></li>
+                    <li><a href="https://whatsapp.com/channel/0029Vb8TEO2FSAt0DnFycN0c" target="_blank">Channel</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
+            <p>Designed & Built by NEXORA STUDIOS</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
