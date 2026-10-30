@@ -12,7 +12,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
-        /* Paste the EXACT same CSS from products.html here */
         :root {
             --bg-fallback: #08090D; --bg-card: rgba(18, 20, 27, 0.6);
             --text-main: #FFFFFF; --text-muted: #A1A1AA;
@@ -78,6 +77,14 @@
         .btn-buy { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: var(--transition); }
         .btn-buy:hover { background: #FFFFFF; color: #08090D; border-color: #FFFFFF; }
 
+        /* Trust & Valuation Section */
+        .trust-section { margin-top: 80px; padding: 60px 5%; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
+        .trust-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 40px; }
+        .trust-item { display: flex; flex-direction: column; gap: 15px; }
+        .trust-item h4 { font-size: 1.2rem; color: var(--cyan); }
+        .trust-item p { color: var(--text-muted); font-size: 0.95rem; }
+        @media (min-width: 768px) { .trust-grid { grid-template-columns: 1fr 1fr; } }
+
         .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.9); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
@@ -138,11 +145,24 @@
             </div>
         </div>
 
-        <!-- The ID here is 'account-grid' so script.js knows to load accounts -->
         <div class="product-grid" id="account-grid">
             <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
             <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
             <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
+        </div>
+
+        <div class="trust-section reveal">
+            <h2 style="font-size: 1.8rem; margin-bottom: 20px;">WHAT BUYERS LOOK FOR</h2>
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <h4><i class="fa-solid fa-check-circle"></i> Clean Histories</h4>
+                    <p>We prioritize accounts with no bans or offenses and organic growth. High interaction rates and real followers are key.</p>
+                </div>
+                <div class="trust-item">
+                    <h4><i class="fa-solid fa-chart-line"></i> Account Valuation</h4>
+                    <p>Experienced buyers value accounts based on annual net profit (up to 2x-3x multiples), engagement quality, niche, and documented revenue history.</p>
+                </div>
+            </div>
         </div>
     </section>
 
