@@ -3,8 +3,8 @@
 const PRODUCTS_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
 const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
 
-// 2. ACCOUNTS SHEET (Social Media Marketplace) - UPDATED
-const ACCOUNTS_ID = '19zcWjHnwCU0snl3mSWgMDevzkX7MJk48CFCNdKZgvsI'; 
+// 2. ACCOUNTS SHEET (Social Media Marketplace) - UPDATED with your new link
+const ACCOUNTS_ID = '1hp1OYytQHVbS9E0PlHlXAxDZpv0kBgYQ3RtPMb1cVOc'; 
 const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
 
 // 3. SETTINGS SHEET (Video Background)
