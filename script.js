@@ -1,22 +1,17 @@
 // --- GOOGLE SHEETS CONFIG ---
 // 1. MAIN SHEET (Products & Portfolio)
 const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
-
-// Products reads from the default Sheet1 (just like your screenshot)
 const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
-
-// Portfolio reads from a tab named "Portfolio" inside that same sheet
 const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Portfolio`;
 
-// 2. ACCOUNTS SHEET (Social Media Marketplace)
+// 2. ACCOUNTS SHEET
 const ACCOUNTS_ID = '1hp1OYytQHVbS9E0PlHlXAxDZpv0kBgYQ3RtPMb1cVOc'; 
 const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
 
-// 3. SETTINGS SHEET (Video Background)
+// 3. SETTINGS SHEET
 const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
 const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
-// --- DOM ELEMENTS ---
 const navbar = document.getElementById('navbar');
 const menuBtn = document.getElementById('menuBtn');
 const closeMenu = document.getElementById('closeMenu');
@@ -24,12 +19,10 @@ const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
 const projectForm = document.getElementById('projectForm');
 
-// --- AUTO UPDATE YEAR ---
 if(document.getElementById('year')) {
     document.getElementById('year').textContent = new Date().getFullYear();
 }
 
-// --- NAVBAR SCROLL EFFECT ---
 if (navbar) {
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) navbar.classList.add('scrolled');
@@ -37,7 +30,6 @@ if (navbar) {
     });
 }
 
-// --- MOBILE MENU ---
 if (menuBtn) {
     function toggleMenu(open) {
         if (open) {
@@ -53,7 +45,6 @@ if (menuBtn) {
     mobileLinks.forEach(link => link.addEventListener('click', () => toggleMenu(false)));
 }
 
-// --- SCROLL REVEAL ---
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
 const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -65,20 +56,17 @@ const observer = new IntersectionObserver((entries, observer) => {
 }, observerOptions);
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// --- 1. LOAD SITE SETTINGS (BACKGROUND VIDEO) ---
 async function loadSiteSettings() {
     try {
         const response = await fetch(SETTINGS_URL);
         if (!response.ok) return; 
         const csvText = await response.text();
-        
         Papa.parse(csvText, {
             header: true, skipEmptyLines: true,
             complete: function(results) {
                 const videoSource = document.getElementById('bg-video-source');
                 const videoTag = document.getElementById('bg-video');
                 if (!videoSource || !videoTag) return;
-
                 results.data.forEach(row => {
                     if (row.key && row.key.trim().toLowerCase() === 'background_video' && row.value) {
                         videoSource.src = row.value.trim();
@@ -90,7 +78,6 @@ async function loadSiteSettings() {
     } catch (error) { console.log("Settings not loaded."); }
 }
 
-// --- HELPER: GOOGLE DRIVE IMAGE CONVERTER ---
 function getDriveDirectLink(url) {
     if (!url || !url.includes('drive.google.com')) return url;
     const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]+)/);
@@ -98,14 +85,14 @@ function getDriveDirectLink(url) {
 }
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- 2. LOAD PORTFOLIO (Reads from Portfolio tab) ---
+// --- LOAD PORTFOLIO ---
 async function loadPortfolio() {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return; 
 
     try {
         const response = await fetch(PORTFOLIO_URL);
-        if (!response.ok) return; // Silently fail if tab doesn't exist yet
+        if (!response.ok) return; 
         const csvText = await response.text();
 
         Papa.parse(csvText, {
@@ -120,15 +107,18 @@ async function loadPortfolio() {
 
                 results.data.forEach((item, index) => {
                     let imgUrl = getDriveDirectLink(item.image ? item.image.trim() : '') || FALLBACK_IMG;
+                    // Smart fallback: use 'title' if it exists, otherwise use 'name'
+                    let title = item.title || item.name || 'Project Showcase';
+                    let tag = item.tag || 'Design';
                     
                     const card = document.createElement('div');
                     card.className = 'portfolio-card reveal';
                     card.style.transitionDelay = `${index * 0.1}s`; 
                     card.innerHTML = `
-                        <img src="${imgUrl}" alt="${item.title}" onerror="this.src='${FALLBACK_IMG}'">
+                        <img src="${imgUrl}" alt="${title}" onerror="this.src='${FALLBACK_IMG}'">
                         <div class="portfolio-overlay">
-                            <div class="portfolio-tag">${item.tag || 'Design'}</div>
-                            <div class="portfolio-title">${item.title || 'Untitled Project'}</div>
+                            <div class="portfolio-tag">${tag}</div>
+                            <div class="portfolio-title">${title}</div>
                         </div>
                     `;
                     grid.appendChild(card);
@@ -139,7 +129,7 @@ async function loadPortfolio() {
     } catch (error) { console.log("Portfolio not loaded:", error); }
 }
 
-// --- 3. LOAD PRODUCTS (Reads from Sheet1 - based on your screenshot) ---
+// --- LOAD PRODUCTS ---
 async function loadProducts() {
     const grid = document.getElementById('product-grid');
     if (!grid) return; 
@@ -154,7 +144,6 @@ async function loadProducts() {
         Papa.parse(csvText, {
             header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase(),
             complete: function(results) {
-                // Check for expired items (skip check if no 'expiry' column exists)
                 const today = new Date(); today.setHours(0,0,0,0);
                 const activeProducts = results.data.filter(p => {
                     if (!p.expiry || p.expiry.trim() === '') return true;
@@ -171,13 +160,10 @@ async function loadProducts() {
                 }
 
                 activeProducts.forEach((product, index) => {
-                    // Handle your specific header names from the screenshot
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
                     const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
-                    
                     const rawPrice = product['price usd'];
                     const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
-                    
                     let imgUrl = getDriveDirectLink(product.image ? product.image.trim() : '') || FALLBACK_IMG;
 
                     const card = document.createElement('div');
@@ -207,7 +193,7 @@ async function loadProducts() {
     }
 }
 
-// --- 4. LOAD ACCOUNTS (Reads from Accounts Sheet) ---
+// --- LOAD ACCOUNTS ---
 async function loadAccounts() {
     const grid = document.getElementById('account-grid');
     if (!grid) return; 
@@ -273,7 +259,6 @@ async function loadAccounts() {
     }
 }
 
-// --- FORM SUBMISSION ---
 if (projectForm) {
     projectForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -293,7 +278,6 @@ if (projectForm) {
     });
 }
 
-// --- INITIALIZE ---
 loadSiteSettings();
 loadPortfolio();
 loadProducts();
