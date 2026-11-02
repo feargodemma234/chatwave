@@ -1,16 +1,18 @@
 // --- GOOGLE SHEETS CONFIG ---
-// 1. PRODUCTS SHEET (Digital Assets) - UPDATED with your new link
-const PRODUCTS_ID = '1VOs1jvUKKfRarBqgM_U7bBOmTeGCNU-gON4f6X4lPcU'; 
-const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
+// 1. MAIN SHEET (Products & Portfolio)
+const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
 
-// 2. PORTFOLIO TAB (Inside the Products Sheet)
-const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/gviz/tq?tqx=out:csv&sheet=Portfolio`;
+// Products reads from the default Sheet1 (just like your screenshot)
+const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
 
-// 3. ACCOUNTS SHEET (Social Media Marketplace)
+// Portfolio reads from a tab named "Portfolio" inside that same sheet
+const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Portfolio`;
+
+// 2. ACCOUNTS SHEET (Social Media Marketplace)
 const ACCOUNTS_ID = '1hp1OYytQHVbS9E0PlHlXAxDZpv0kBgYQ3RtPMb1cVOc'; 
 const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
 
-// 4. SETTINGS SHEET (Video Background)
+// 3. SETTINGS SHEET (Video Background)
 const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
 const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
@@ -137,7 +139,7 @@ async function loadPortfolio() {
     } catch (error) { console.log("Portfolio not loaded:", error); }
 }
 
-// --- 3. LOAD PRODUCTS (Reads from Sheet1) ---
+// --- 3. LOAD PRODUCTS (Reads from Sheet1 - based on your screenshot) ---
 async function loadProducts() {
     const grid = document.getElementById('product-grid');
     if (!grid) return; 
@@ -152,6 +154,7 @@ async function loadProducts() {
         Papa.parse(csvText, {
             header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase(),
             complete: function(results) {
+                // Check for expired items (skip check if no 'expiry' column exists)
                 const today = new Date(); today.setHours(0,0,0,0);
                 const activeProducts = results.data.filter(p => {
                     if (!p.expiry || p.expiry.trim() === '') return true;
@@ -168,10 +171,13 @@ async function loadProducts() {
                 }
 
                 activeProducts.forEach((product, index) => {
+                    // Handle your specific header names from the screenshot
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
                     const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
+                    
                     const rawPrice = product['price usd'];
                     const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+                    
                     let imgUrl = getDriveDirectLink(product.image ? product.image.trim() : '') || FALLBACK_IMG;
 
                     const card = document.createElement('div');
