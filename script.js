@@ -1,17 +1,21 @@
 // --- GOOGLE SHEETS CONFIG ---
-// 1. MAIN SHEET (Products & Portfolio)
-const SHEET_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
-const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
-const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Portfolio`;
+// 1. PRODUCTS SHEET (Digital Collection)
+const PRODUCTS_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
+const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
 
-// 2. ACCOUNTS SHEET
+// 2. PORTFOLIO SHEET (Designs & Samples) - UPDATED
+const PORTFOLIO_ID = '1VOs1jvUKKfRarBqgM_U7bBOmTeGCNU-gON4f6X4lPcU';
+const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${PORTFOLIO_ID}/export?format=csv`;
+
+// 3. ACCOUNTS SHEET (Social Media Marketplace)
 const ACCOUNTS_ID = '1hp1OYytQHVbS9E0PlHlXAxDZpv0kBgYQ3RtPMb1cVOc'; 
 const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
 
-// 3. SETTINGS SHEET
+// 4. SETTINGS SHEET (Video Background)
 const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
 const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
+// --- DOM ELEMENTS ---
 const navbar = document.getElementById('navbar');
 const menuBtn = document.getElementById('menuBtn');
 const closeMenu = document.getElementById('closeMenu');
@@ -19,10 +23,12 @@ const mobileMenu = document.getElementById('mobileMenu');
 const mobileLinks = document.querySelectorAll('.mobile-link');
 const projectForm = document.getElementById('projectForm');
 
+// --- AUTO UPDATE YEAR ---
 if(document.getElementById('year')) {
     document.getElementById('year').textContent = new Date().getFullYear();
 }
 
+// --- NAVBAR SCROLL EFFECT ---
 if (navbar) {
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) navbar.classList.add('scrolled');
@@ -30,6 +36,7 @@ if (navbar) {
     });
 }
 
+// --- MOBILE MENU ---
 if (menuBtn) {
     function toggleMenu(open) {
         if (open) {
@@ -45,6 +52,7 @@ if (menuBtn) {
     mobileLinks.forEach(link => link.addEventListener('click', () => toggleMenu(false)));
 }
 
+// --- SCROLL REVEAL ---
 const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
 const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
@@ -56,17 +64,20 @@ const observer = new IntersectionObserver((entries, observer) => {
 }, observerOptions);
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+// --- 1. LOAD SITE SETTINGS (BACKGROUND VIDEO) ---
 async function loadSiteSettings() {
     try {
         const response = await fetch(SETTINGS_URL);
         if (!response.ok) return; 
         const csvText = await response.text();
+        
         Papa.parse(csvText, {
             header: true, skipEmptyLines: true,
             complete: function(results) {
                 const videoSource = document.getElementById('bg-video-source');
                 const videoTag = document.getElementById('bg-video');
                 if (!videoSource || !videoTag) return;
+
                 results.data.forEach(row => {
                     if (row.key && row.key.trim().toLowerCase() === 'background_video' && row.value) {
                         videoSource.src = row.value.trim();
@@ -78,6 +89,7 @@ async function loadSiteSettings() {
     } catch (error) { console.log("Settings not loaded."); }
 }
 
+// --- HELPER: GOOGLE DRIVE IMAGE CONVERTER ---
 function getDriveDirectLink(url) {
     if (!url || !url.includes('drive.google.com')) return url;
     const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]+)/);
@@ -85,7 +97,7 @@ function getDriveDirectLink(url) {
 }
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- LOAD PORTFOLIO ---
+// --- 2. LOAD PORTFOLIO (Reads from the new Portfolio Sheet) ---
 async function loadPortfolio() {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return; 
@@ -107,9 +119,10 @@ async function loadPortfolio() {
 
                 results.data.forEach((item, index) => {
                     let imgUrl = getDriveDirectLink(item.image ? item.image.trim() : '') || FALLBACK_IMG;
-                    // Smart fallback: use 'title' if it exists, otherwise use 'name'
+                    
+                    // Use 'title' or fallback to 'name' or 'tag'
                     let title = item.title || item.name || 'Project Showcase';
-                    let tag = item.tag || 'Design';
+                    let tag = item.tag || item.category || 'Design';
                     
                     const card = document.createElement('div');
                     card.className = 'portfolio-card reveal';
@@ -129,7 +142,7 @@ async function loadPortfolio() {
     } catch (error) { console.log("Portfolio not loaded:", error); }
 }
 
-// --- LOAD PRODUCTS ---
+// --- 3. LOAD PRODUCTS (Reads from Sheet1 of Products Sheet) ---
 async function loadProducts() {
     const grid = document.getElementById('product-grid');
     if (!grid) return; 
@@ -162,8 +175,10 @@ async function loadProducts() {
                 activeProducts.forEach((product, index) => {
                     let selarLink = product['selar link'] ? product['selar link'].trim() : '#';
                     const checkoutLink = selarLink.includes('?') ? selarLink + '&add_to_cart=1' : selarLink + '?add_to_cart=1';
+                    
                     const rawPrice = product['price usd'];
                     const formattedPrice = rawPrice && rawPrice.trim() !== '' ? `$${rawPrice}` : 'Free';
+                    
                     let imgUrl = getDriveDirectLink(product.image ? product.image.trim() : '') || FALLBACK_IMG;
 
                     const card = document.createElement('div');
@@ -193,7 +208,7 @@ async function loadProducts() {
     }
 }
 
-// --- LOAD ACCOUNTS ---
+// --- 4. LOAD ACCOUNTS ---
 async function loadAccounts() {
     const grid = document.getElementById('account-grid');
     if (!grid) return; 
@@ -259,6 +274,7 @@ async function loadAccounts() {
     }
 }
 
+// --- FORM SUBMISSION ---
 if (projectForm) {
     projectForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -278,6 +294,7 @@ if (projectForm) {
     });
 }
 
+// --- INITIALIZE ---
 loadSiteSettings();
 loadPortfolio();
 loadProducts();
