@@ -1,13 +1,16 @@
 // --- GOOGLE SHEETS CONFIG ---
-// 1. PRODUCTS SHEET (Digital Assets)
-const PRODUCTS_ID = '19W33pFurvp8OHdVYSzcBsH2xjML6p5PStGCZeUblIsM'; 
+// 1. PRODUCTS SHEET (Digital Assets) - UPDATED with your new link
+const PRODUCTS_ID = '1VOs1jvUKKfRarBqgM_U7bBOmTeGCNU-gON4f6X4lPcU'; 
 const PRODUCTS_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/export?format=csv`;
 
-// 2. ACCOUNTS SHEET (Social Media Marketplace) - UPDATED with your new link
+// 2. PORTFOLIO TAB (Inside the Products Sheet)
+const PORTFOLIO_URL = `https://docs.google.com/spreadsheets/d/${PRODUCTS_ID}/gviz/tq?tqx=out:csv&sheet=Portfolio`;
+
+// 3. ACCOUNTS SHEET (Social Media Marketplace)
 const ACCOUNTS_ID = '1hp1OYytQHVbS9E0PlHlXAxDZpv0kBgYQ3RtPMb1cVOc'; 
 const ACCOUNTS_URL = `https://docs.google.com/spreadsheets/d/${ACCOUNTS_ID}/export?format=csv`;
 
-// 3. SETTINGS SHEET (Video Background)
+// 4. SETTINGS SHEET (Video Background)
 const SETTINGS_ID = '1LufDdJ5n-nWTMIwEhxTSBddlHaO-ykVCssOQ47XHuSU';
 const SETTINGS_URL = `https://docs.google.com/spreadsheets/d/${SETTINGS_ID}/gviz/tq?tqx=out:csv&sheet=SiteSettings`;
 
@@ -68,8 +71,7 @@ async function loadSiteSettings() {
         const csvText = await response.text();
         
         Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
+            header: true, skipEmptyLines: true,
             complete: function(results) {
                 const videoSource = document.getElementById('bg-video-source');
                 const videoTag = document.getElementById('bg-video');
@@ -83,9 +85,7 @@ async function loadSiteSettings() {
                 });
             }
         });
-    } catch (error) {
-        console.log("Settings not loaded.");
-    }
+    } catch (error) { console.log("Settings not loaded."); }
 }
 
 // --- HELPER: GOOGLE DRIVE IMAGE CONVERTER ---
@@ -96,7 +96,48 @@ function getDriveDirectLink(url) {
 }
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-// --- 2. LOAD PRODUCTS (Runs on products.html) ---
+// --- 2. LOAD PORTFOLIO (Reads from Portfolio tab) ---
+async function loadPortfolio() {
+    const grid = document.getElementById('portfolio-grid');
+    if (!grid) return; 
+
+    try {
+        const response = await fetch(PORTFOLIO_URL);
+        if (!response.ok) return; // Silently fail if tab doesn't exist yet
+        const csvText = await response.text();
+
+        Papa.parse(csvText, {
+            header: true, skipEmptyLines: true, transformHeader: h => h.trim().toLowerCase(),
+            complete: function(results) {
+                grid.innerHTML = ''; 
+
+                if (results.data.length === 0) {
+                    grid.innerHTML = '<p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">Portfolio coming soon.</p>';
+                    return;
+                }
+
+                results.data.forEach((item, index) => {
+                    let imgUrl = getDriveDirectLink(item.image ? item.image.trim() : '') || FALLBACK_IMG;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'portfolio-card reveal';
+                    card.style.transitionDelay = `${index * 0.1}s`; 
+                    card.innerHTML = `
+                        <img src="${imgUrl}" alt="${item.title}" onerror="this.src='${FALLBACK_IMG}'">
+                        <div class="portfolio-overlay">
+                            <div class="portfolio-tag">${item.tag || 'Design'}</div>
+                            <div class="portfolio-title">${item.title || 'Untitled Project'}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                    observer.observe(card);
+                });
+            }
+        });
+    } catch (error) { console.log("Portfolio not loaded:", error); }
+}
+
+// --- 3. LOAD PRODUCTS (Reads from Sheet1) ---
 async function loadProducts() {
     const grid = document.getElementById('product-grid');
     if (!grid) return; 
@@ -160,7 +201,7 @@ async function loadProducts() {
     }
 }
 
-// --- 3. LOAD ACCOUNTS (Runs on accounts.html) ---
+// --- 4. LOAD ACCOUNTS (Reads from Accounts Sheet) ---
 async function loadAccounts() {
     const grid = document.getElementById('account-grid');
     if (!grid) return; 
@@ -248,5 +289,6 @@ if (projectForm) {
 
 // --- INITIALIZE ---
 loadSiteSettings();
+loadPortfolio();
 loadProducts();
 loadAccounts();
