@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Social Accounts Market | NEXORA STUDIOS</title>
+    <title>Work & Collection | NEXORA STUDIOS</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,45 +13,103 @@
 
     <style>
         :root {
-            --bg-fallback: #08090D; --bg-card: rgba(18, 20, 27, 0.6);
-            --text-main: #FFFFFF; --text-muted: #A1A1AA;
-            --violet: #8B5CF6; --cyan: #36D9FF; --border: rgba(255, 255, 255, 0.1);
-            --font-heading: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+            --bg-fallback: #08090D;
+            --bg-card: rgba(18, 20, 27, 0.6);
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1AA;
+            --violet: #8B5CF6;
+            --cyan: #36D9FF;
+            --border: rgba(255, 255, 255, 0.1);
+            
+            --font-heading: 'Space Grotesk', sans-serif; 
+            --font-body: 'Inter', sans-serif;
             --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html { scroll-behavior: smooth; }
-        body { background-color: var(--bg-fallback); color: var(--text-main); font-family: var(--font-body); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         
-        /* Live Background */
-        #bg-video { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; opacity: 1; background-color: var(--bg-fallback); }
-        .video-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(8, 9, 13, 0.65); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: -1; pointer-events: none; }
+        body {
+            background-color: var(--bg-fallback);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- LIVE VIDEO BACKGROUND --- */
+        #bg-video {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            object-fit: cover; z-index: -2; opacity: 1; background-color: var(--bg-fallback); 
+        }
         
-        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+        .video-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(8, 9, 13, 0.75);
+            backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+            z-index: -1; pointer-events: none;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--violet); }
+
         h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--text-main); }
         
-        .section-label { font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 700; }
+        .section-label {
+            font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--cyan); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-weight: 700;
+        }
         .section-label::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
-        
-        /* Navbar */
-        .navbar { position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: var(--transition); background: transparent; border-bottom: 1px solid transparent; }
-        .navbar.scrolled { background: rgba(8, 9, 13, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 16px 5%; }
+
+        /* --- NAVIGATION --- */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 24px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: var(--transition); 
+            background: transparent; border-bottom: 1px solid transparent;
+        }
+        .navbar.scrolled {
+            background: rgba(8, 9, 13, 0.85);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border); padding: 16px 5%;
+        }
         .logo { font-family: var(--font-heading); font-size: 1.4rem; letter-spacing: -0.5px; font-weight: 700; color: var(--text-main); text-decoration: none; }
         .logo span { color: var(--violet); }
+        
         .nav-links { display: none; gap: 25px; }
         .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transition); text-transform: uppercase; letter-spacing: 1px; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
-        .nav-cta { display: none; padding: 12px 28px; border-radius: 4px; background: #FFFFFF; color: #08090D; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: var(--transition); }
+        
+        .nav-cta {
+            display: none; padding: 12px 28px; border-radius: 4px; background: #FFFFFF; color: #08090D;
+            text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: var(--transition);
+        }
         .nav-cta:hover { background: var(--violet); color: #FFF; box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+
         .mobile-menu-btn { display: block; color: var(--text-main); font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 10px; }
 
-        /* Mobile Menu */
-        .mobile-menu { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 1001; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 0 10%; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        /* --- MOBILE MENU --- */
+        .mobile-menu {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 8, 0.95);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 1001; 
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+            padding: 0 10%; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
         .mobile-menu.active { opacity: 1; pointer-events: all; }
-        .close-menu { position: absolute; top: 30px; right: 10%; font-size: 2rem; color: var(--text-main); cursor: pointer; background: rgba(255,255,255,0.1); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; transition: var(--transition); }
+        .close-menu { 
+            position: absolute; top: 30px; right: 10%; font-size: 2rem; color: var(--text-main); cursor: pointer; 
+            background: rgba(255,255,255,0.1); border: 1px solid var(--border); width: 50px; height: 50px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; transition: var(--transition);
+        }
         .close-menu:hover { background: var(--violet); transform: rotate(90deg); }
         .mobile-menu-links { display: flex; flex-direction: column; gap: 15px; margin-bottom: 50px; }
-        .mobile-link { font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 3rem); text-decoration: none; font-weight: 700; color: var(--text-main); display: flex; align-items: baseline; gap: 15px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-link { 
+            font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 3rem); text-decoration: none; font-weight: 700; color: var(--text-main); 
+            display: flex; align-items: baseline; gap: 15px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         .mobile-link .num { font-family: var(--font-body); font-size: 0.9rem; color: var(--cyan); font-weight: 600; letter-spacing: 2px; }
         .mobile-link:hover { background: linear-gradient(135deg, var(--violet), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transform: translateX(10px); }
         .mobile-menu.active .mobile-link:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
@@ -60,68 +118,85 @@
         .mobile-menu.active .mobile-link:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
         .mobile-menu.active .mobile-link:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
         .mobile-menu.active .mobile-link:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 0.6s; }
-        .mobile-cta { display: inline-flex; padding: 16px 32px; background: var(--text-main); color: #08090D; text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 4px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .mobile-cta {
+            display: inline-flex; padding: 16px 32px; background: var(--text-main); color: #08090D;
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 4px;
+            opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
         .mobile-menu.active .mobile-cta { opacity: 1; transform: translateY(0); transition-delay: 0.7s; }
 
-        /* Marketplace */
-        .marketplace { padding: 160px 5% 120px; min-height: 100vh; }
-        .marketplace-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 60px; flex-wrap: wrap; gap: 24px; }
-        .marketplace-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); }
+        /* --- MAIN PAGE LAYOUT --- */
+        .page-header { padding: 160px 5% 60px; text-align: center; }
+        .page-header h1 { font-size: clamp(3rem, 6vw, 5rem); margin-bottom: 20px; text-transform: uppercase; }
+        .page-header p { color: var(--text-muted); font-size: 1.2rem; max-width: 600px; margin: 0 auto; font-weight: 500; }
+
+        /* --- PORTFOLIO SHOWCASE SECTION --- */
+        .portfolio-section { padding: 0 5% 100px; }
+        .portfolio-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        
+        .portfolio-card {
+            position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--border);
+            aspect-ratio: 4/3; cursor: pointer;
+        }
+        .portfolio-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s ease; }
+        .portfolio-card:hover img { transform: scale(1.08); }
+        
+        .portfolio-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(8, 9, 13, 0.95) 0%, rgba(8, 9, 13, 0.4) 50%, transparent 100%);
+            display: flex; flex-direction: column; justify-content: flex-end; padding: 30px;
+            transition: var(--transition);
+        }
+        .portfolio-card:hover .portfolio-overlay { background: linear-gradient(to top, rgba(139, 92, 246, 0.9) 0%, rgba(8, 9, 13, 0.5) 60%, transparent 100%); }
+        
+        .portfolio-tag { font-size: 0.75rem; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 8px; }
+        .portfolio-card:hover .portfolio-tag { color: #fff; }
+        .portfolio-title { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--white); }
+
+        /* --- DIGITAL PRODUCTS SECTION --- */
+        .marketplace { padding: 80px 5% 120px; background: rgba(18, 20, 27, 0.4); border-top: 1px solid var(--border); }
+        .marketplace-header { text-align: center; margin-bottom: 60px; }
+        .marketplace-header h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 16px; }
+        .marketplace-header p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
         
         .product-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
-        .product-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: var(--transition); display: flex; flex-direction: column; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        .product-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; transition: var(--transition); display: flex; flex-direction: column;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
         .product-card:hover { border-color: rgba(139, 92, 246, 0.4); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); }
-        .product-image-wrapper { width: 100%; height: 240px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
+        
+        .product-image-wrapper { width: 100%; height: 220px; overflow: hidden; border-bottom: 1px solid var(--border); position: relative; }
         .product-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .product-card:hover .product-image { transform: scale(1.05); }
-        .product-info { padding: 32px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-info h3 { font-size: 1.4rem; margin-bottom: 12px; }
-        .product-info p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; flex-grow: 1; font-weight: 500; line-height: 1.8; }
-        .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+        
+        .product-info { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+        .product-info h3 { font-size: 1.3rem; margin-bottom: 12px; }
+        .product-info p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; flex-grow: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-weight: 500; }
+        
+        .product-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
         .product-price { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
         .product-category { font-size: 0.75rem; color: var(--violet); border: 1px solid rgba(139, 92, 246, 0.3); padding: 4px 12px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .btn-buy { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-main); text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: var(--transition); }
+        
+        .btn-buy {
+            display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%;
+            padding: 16px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text-main);
+            text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: var(--transition);
+        }
         .btn-buy:hover { background: #FFFFFF; color: #08090D; border-color: #FFFFFF; }
 
+        /* Skeleton Loader */
         .skeleton-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .skeleton-img { width: 100%; height: 240px; background: rgba(255,255,255,0.05); }
-        .skeleton-text { height: 20px; background: rgba(255,255,255,0.05); margin: 20px 32px 10px; border-radius: 4px; }
+        .skeleton-img { width: 100%; height: 220px; background: rgba(255,255,255,0.05); }
+        .skeleton-text { height: 20px; background: rgba(255,255,255,0.05); margin: 20px 30px 10px; border-radius: 4px; }
         .skeleton-text.short { width: 50%; margin-bottom: 30px; }
         .shimmer { animation: shimmer 1.5s infinite linear; background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; }
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        /* Trust & Disclaimer Section */
-        .trust-section { margin-top: 80px; padding: 60px 5%; background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); backdrop-filter: blur(10px); }
-        .trust-grid { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 40px; }
-        .trust-item { display: flex; flex-direction: column; gap: 15px; }
-        .trust-item h4 { font-size: 1.2rem; color: var(--cyan); }
-        .trust-item p { color: var(--text-muted); font-size: 0.95rem; }
-        
-        /* NEW: Disclaimer Alert Box */
-        .disclaimer-box {
-            margin-top: 40px;
-            padding: 30px;
-            background: rgba(239, 68, 68, 0.05);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-left: 4px solid #EF4444;
-            border-radius: 8px;
-            display: flex;
-            gap: 20px;
-            align-items: flex-start;
-        }
-        .disclaimer-box i { color: #EF4444; font-size: 1.5rem; margin-top: 2px; }
-        .disclaimer-box h4 { color: #EF4444; margin-bottom: 8px; font-size: 1.1rem; }
-        .disclaimer-box p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin: 0; }
-
-        @media (min-width: 768px) { 
-            .nav-links { display: flex; } .nav-cta { display: inline-block; } .mobile-menu-btn { display: none; }
-            .product-grid { grid-template-columns: repeat(2, 1fr); }
-            .trust-grid { grid-template-columns: 1fr 1fr; } 
-        }
-        @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
-
-        /* Footer */
-        .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.9); border-top: 1px solid var(--border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        /* --- FOOTER --- */
+        .footer { padding: 80px 5% 40px; background: rgba(8, 9, 13, 0.95); border-top: 1px solid var(--border); backdrop-filter: blur(10px); }
         .footer-grid { display: grid; grid-template-columns: 1fr; gap: 48px; margin-bottom: 60px; }
         .footer-brand h3 { font-family: var(--font-heading); font-size: 1.8rem; margin-bottom: 16px; }
         .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; font-weight: 500; }
@@ -130,15 +205,29 @@
         .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: var(--transition); font-weight: 500; }
         .footer-links a:hover { color: var(--cyan); }
         .footer-bottom { display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 32px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; }
+
+        /* --- MEDIA QUERIES (DESKTOP) --- */
         @media (min-width: 768px) {
+            .nav-links { display: flex; } 
+            .nav-cta { display: inline-block; } 
+            .mobile-menu-btn { display: none; }
+            .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
             .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
             .footer-bottom { flex-direction: row; justify-content: space-between; }
+        }
+        @media (min-width: 1024px) {
+            .portfolio-grid { grid-template-columns: repeat(3, 1fr); }
+            .product-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <video autoplay loop muted playsinline id="bg-video"><source id="bg-video-source" src="" type="video/mp4"></video>
+    <video autoplay loop muted playsinline id="bg-video">
+        <source id="bg-video-source" src="" type="video/mp4">
+    </video>
+    
     <div class="video-overlay"></div>
 
     <nav class="navbar" id="navbar">
@@ -147,8 +236,8 @@
             <a href="index.html">Home</a>
             <a href="index.html#about">About</a>
             <a href="index.html#services">Services</a>
-            <a href="products.html">Products</a>
-            <a href="accounts.html" class="active">Accounts</a>
+            <a href="products.html" class="active">Work & Shop</a>
+            <a href="accounts.html">Accounts</a>
             <a href="contact.html">Contact</a>
         </div>
         <a href="contact.html" class="nav-cta">START A PROJECT ↗</a>
@@ -161,52 +250,56 @@
             <a href="index.html" class="mobile-link"><span class="num">01</span> Home</a>
             <a href="index.html#about" class="mobile-link"><span class="num">02</span> About</a>
             <a href="index.html#services" class="mobile-link"><span class="num">03</span> Services</a>
-            <a href="products.html" class="mobile-link"><span class="num">04</span> Products</a>
+            <a href="products.html" class="mobile-link"><span class="num">04</span> Work & Shop</a>
             <a href="accounts.html" class="mobile-link"><span class="num">05</span> Accounts</a>
             <a href="contact.html" class="mobile-link"><span class="num">06</span> Contact</a>
         </div>
         <a href="contact.html" class="mobile-cta">LET'S CREATE ↗</a>
     </div>
 
-    <section class="marketplace" id="accounts">
+    <!-- Page Header -->
+    <header class="page-header reveal">
+        <div class="section-label" style="justify-content: center;">PORTFOLIO & COLLECTION</div>
+        <h1>EXPLORE OUR<br>WORK & SHOP.</h1>
+        <p>From bespoke logo designs and AI visuals to ready-to-use digital products, see everything NEXORA STUDIOS creates.</p>
+    </header>
+
+    <!-- Portfolio Showcase (Dynamic) -->
+    <section class="portfolio-section">
+        <div class="portfolio-grid" id="portfolio-grid">
+            <p style="color: var(--text-muted); text-align: center; width: 100%; grid-column: 1/-1;">Loading portfolio...</p>
+        </div>
+    </section>
+
+    <!-- Digital Products (Dynamic) -->
+    <section class="marketplace" id="products">
         <div class="marketplace-header reveal">
-            <div>
-                <div class="section-label">SOCIAL MEDIA MARKET</div>
-                <h2>BUY ESTABLISHED<br>SOCIAL ACCOUNTS.</h2>
-                <p style="color: var(--text-muted); margin-top: 15px; max-width: 500px;">Skip the grind. Buy established, high-engagement social media accounts with real followers ready for monetization.</p>
-            </div>
+            <div class="section-label" style="justify-content: center;">THE DIGITAL COLLECTION</div>
+            <h2>READY-TO-USE ASSETS.</h2>
+            <p>Instant download. Premium quality. Built to help you work smarter.</p>
         </div>
 
-        <div class="product-grid" id="account-grid">
-            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-            <div class="skeleton-card"><div class="skeleton-img shimmer"></div><div class="skeleton-text shimmer"></div><div class="skeleton-text short shimmer"></div></div>
-        </div>
-
-        <div class="trust-section reveal">
-            <h2 style="font-size: 1.8rem; margin-bottom: 20px;">WHAT BUYERS LOOK FOR</h2>
-            <div class="trust-grid">
-                <div class="trust-item">
-                    <h4><i class="fa-solid fa-check-circle"></i> Clean Histories</h4>
-                    <p>We prioritize accounts with no bans or offenses and organic growth. High interaction rates and real followers are key.</p>
-                </div>
-                <div class="trust-item">
-                    <h4><i class="fa-solid fa-chart-line"></i> Account Valuation</h4>
-                    <p>Experienced buyers value accounts based on annual net profit (up to 2x-3x multiples), engagement quality, niche, and documented revenue history.</p>
-                </div>
+        <div class="product-grid" id="product-grid">
+            <!-- Skeletons -->
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
             </div>
-
-            <!-- NEW DISCLAIMER -->
-            <div class="disclaimer-box">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <div>
-                    <h4>Important Disclaimer</h4>
-                    <p>NEXORA STUDIOS acts solely as a marketplace connecting buyers and sellers. Once an account is sold and credentials are transferred, the new owner assumes full responsibility. NEXORA STUDIOS is not liable for any content posted, actions taken, or policy violations by the new owner after the sale. All sales are final.</p>
-                </div>
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
+            </div>
+            <div class="skeleton-card">
+                <div class="skeleton-img shimmer"></div>
+                <div class="skeleton-text shimmer"></div>
+                <div class="skeleton-text short shimmer"></div>
             </div>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
@@ -218,7 +311,7 @@
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="index.html#services">Services</a></li>
-                    <li><a href="products.html">Products</a></li>
+                    <li><a href="products.html">Work & Shop</a></li>
                     <li><a href="accounts.html">Accounts</a></li>
                     <li><a href="contact.html">Contact</a></li>
                 </ul>
@@ -243,7 +336,7 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; <span id="year"></span> NEXORA STUDIOS. All rights reserved.</p>
-            <p>Designed & Built by NEXORA STUDIOS</p>
+                        <p>Designed & Built by NEXORA STUDIOS</p>
         </div>
     </footer>
 
